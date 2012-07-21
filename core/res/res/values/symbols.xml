@@ -2254,6 +2254,7 @@
   <java-symbol type="bool" name="config_enable_mms_with_mobile_data_off" />
 
 <<<<<<< HEAD
+<<<<<<< HEAD
   <!-- cpu boost for AppLaunch -->
   <java-symbol type="bool" name="config_enableCpuBoostForAppLaunch" />
   <java-symbol type="integer" name="launchboost_timeout_param" />
@@ -2294,6 +2295,8 @@
 
   <!-- From SignalStrength -->
   <java-symbol type="integer" name="config_LTE_RSRP_threshold_type" />
+
+  <java-symbol type="bool" name="config_wifiApFirmwareReload" />
 
   <!-- Gesture Sensor -->
   <java-symbol type="bool" name="config_enableGestureService" />
