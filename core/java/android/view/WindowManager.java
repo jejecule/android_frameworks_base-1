@@ -1113,6 +1113,12 @@ public interface WindowManager extends ViewManager {
         public static final int PRIVATE_FLAG_DISABLE_WALLPAPER_TOUCH_EVENTS = 0x00000800;
 
         /**
+         * Window flag: Overrides default power key behavior
+         * {@hide}
+         */
+        public static final int PRIVATE_FLAG_PREVENT_POWER_KEY = 0x20000000;
+
+        /**
          * Control flags that are private to the platform.
          * @hide
          */
