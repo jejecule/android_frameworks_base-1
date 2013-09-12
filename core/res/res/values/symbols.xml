@@ -2312,4 +2312,7 @@
   <!-- Package Manager -->
   <java-symbol type="array" name="config_disabledComponents" />
 
+  <!-- cpu boost for overscroller fling -->
+  <java-symbol type="bool" name="config_enableCpuBoostForOverScrollerFling" />
+
 </resources>
