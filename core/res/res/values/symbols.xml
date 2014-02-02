@@ -2350,6 +2350,10 @@
   <java-symbol type="integer" name="ascrollboost_cpuboost" />
   <java-symbol type="integer" name="ascrollboost_pcdisbl" />
 
+  <!-- Theme install failure notification -->
+  <java-symbol type="string" name="theme_install_error_title" />
+  <java-symbol type="string" name="theme_install_error_message" />
+
   <!-- cpu boost for Animationboost -->
   <java-symbol type="bool" name="config_enablePerfBoostForAnimation" />
   <java-symbol type="integer" name="animationboost_timeout_param" />
