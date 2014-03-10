@@ -2315,4 +2315,7 @@
   <!-- cpu boost for overscroller fling -->
   <java-symbol type="bool" name="config_enableCpuBoostForOverScrollerFling" />
 
+  <!-- cpu boost for horizontal scroll -->
+  <java-symbol type="bool" name="config_enableCpuBoostForScroller" />
+
 </resources>
