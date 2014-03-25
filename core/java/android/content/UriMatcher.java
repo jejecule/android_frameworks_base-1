@@ -168,7 +168,7 @@ public class UriMatcher
         if (path != null) {
             String newPath = path;
             // Strip leading slash if present.
-            if (path.length() > 0 && path.charAt(0) == '/') {
+            if (path.length() > 1 && path.charAt(0) == '/') {
                 newPath = path.substring(1);
             }
             tokens = PATH_SPLIT_PATTERN.split(newPath);
