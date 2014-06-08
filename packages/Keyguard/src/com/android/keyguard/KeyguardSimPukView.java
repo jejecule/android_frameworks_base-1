@@ -353,8 +353,6 @@ public class KeyguardSimPukView extends KeyguardPinBasedInputView {
     }
 
     private void updateSim() {
-        getSimUnlockProgressDialog().show();
-
         if (mCheckSimPukThread == null) {
             mCheckSimPukThread = new CheckSimPuk(mPukText, mPinText) {
                 void onSimLockChangedResponse(final int result, final int attemptsRemaining) {
@@ -395,6 +393,8 @@ public class KeyguardSimPukView extends KeyguardPinBasedInputView {
                     });
                 }
             };
+
+            getSimUnlockProgressDialog().show();
             mCheckSimPukThread.start();
         }
     }
