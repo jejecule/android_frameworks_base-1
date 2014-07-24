@@ -3046,7 +3046,12 @@ public final class Settings {
          * default: 0
          * @hide
          */
-        public static final String STATUS_BAR_BATTERY_STYLE = "status_bar_battery_style";
+
+        /**
+         * Locale for secondary overlay on dialer for t9 search input
+         * @hide
+         */
+        public static final String T9_SEARCH_INPUT_LOCALE = "t9_search_input_locale";
 
         /**
          * Settings to backup. This is here so that it's in the same place as the settings
