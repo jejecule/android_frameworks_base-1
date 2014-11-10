@@ -1289,11 +1289,15 @@ public class NotificationPanelView extends PanelView implements
         boolean onHeader = (override || mKeyguardShowing)
                 && x >= header.getLeft() && x <= header.getRight()
                 && y >= header.getTop() && y <= header.getBottom();
+
+        final float w = getMeasuredWidth();
+        float region = (w * (1 / 3f));
+        final boolean showQsOverride = isLayoutRtl() ? (x < region) : (w - region < x);
         if (mQsExpanded) {
             return onHeader || (mScrollView.isScrolledToBottom() && yDiff < 0) && isInQsArea(x, y);
         } else {
-            return onHeader || (!mKeyguardShowing
-                   && mNotificationStackScroller.getNotGoneChildCount() == 0);
+            return onHeader || showQsOverride || (!mKeyguardShowing
+                    && mNotificationStackScroller.getNotGoneChildCount() == 0);
         }
     }
 
