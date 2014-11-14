@@ -794,6 +794,13 @@ class ContextImpl extends Context {
             public Object createService(ContextImpl ctx) {
                 return new CmHardwareManager(ctx);
             }});
+
+        registerService(PROFILE_SERVICE, new ServiceFetcher() {
+            public Object createService(ContextImpl ctx) {
+                final Context outerContext = ctx.getOuterContext();
+                return new ProfileManager (outerContext, ctx.mMainThread.getHandler());
+            }
+        });
     }
 
     static ContextImpl getImpl(Context context) {
