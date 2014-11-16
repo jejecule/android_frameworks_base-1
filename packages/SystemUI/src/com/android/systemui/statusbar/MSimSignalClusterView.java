@@ -421,7 +421,7 @@ public class MSimSignalClusterView
         if (mWifiVisible) {
             mWifiGroup.setVisibility(View.VISIBLE);
             mWifi.setImageResource(mWifiStrengthId);
-            mWifiActivity.setImageResource(mWifiActivityId);
+            mWifiActivity.setImageResource(0/*null*/);
             mWifiGroup.setContentDescription(mWifiDescription);
         } else {
             mWifiGroup.setVisibility(View.GONE);
@@ -488,7 +488,7 @@ public class MSimSignalClusterView
         mMobile[phoneId].setImageResource(mMobileStrengthId[phoneId]);
         mMobileGroup[phoneId].setContentDescription(mMobileTypeDescription + " "
             + mMobileDescription[phoneId]);
-        mMobileActivity[phoneId].setImageResource(mMobileActivityId[phoneId]);
+        mMobileActivity[phoneId].setImageResource(0/*null*/);
         mMobileType[phoneId].setImageResource(mMobileTypeId[phoneId]);
         mNoSimSlot[phoneId].setImageResource(mNoSimIconId[phoneId]);
     }

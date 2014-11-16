@@ -349,7 +349,7 @@ public class SignalClusterView
         if (DEBUG) Log.d(TAG, String.format("vpn: %s", mVpnVisible ? "VISIBLE" : "GONE"));
         if (mWifiVisible) {
             mWifi.setImageResource(mWifiStrengthId);
-            mWifiActivity.setImageResource(mWifiActivityId);
+            mWifiActivity.setImageResource(0/*null*/);
             mWifiGroup.setContentDescription(mWifiDescription);
             mWifiGroup.setVisibility(View.VISIBLE);
         } else {
@@ -421,7 +421,7 @@ public class SignalClusterView
     private void updateMobile() {
         mMobile.setImageResource(mMobileStrengthId);
         mMobileType.setImageResource(mMobileTypeId);
-        mMobileActivity.setImageResource(mMobileActivityId);
+        mMobileActivity.setImageResource(0/*null*/);
         mNoSimSlot.setImageResource(mNoSimIconId);
         mMobileGroup.setContentDescription(mMobileTypeDescription + " " + mMobileDescription);
     }
@@ -445,7 +445,7 @@ public class SignalClusterView
 
     private void updateData() {
         if (mDataVisible) {
-            mDataActivity.setImageResource(mDataActivityId);
+            mDataActivity.setImageResource(0/*null*/);
             mDataGroup.setVisibility(View.VISIBLE);
         } else {
             mDataGroup.setVisibility(View.GONE);

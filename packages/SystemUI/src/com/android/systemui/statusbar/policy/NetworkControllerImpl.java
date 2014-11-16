@@ -96,7 +96,7 @@ public class NetworkControllerImpl extends BroadcastReceiver
     int mAirplaneIconId;
     int mNoSimIconId;
     int mLastSimIconId;
-    int mMobileActivityIconId; // overlay arrows for data direction
+    int mMobileActivityIconId; // overlay arrows for data direction, default Off
     int mLastMobileActivityIconId;
     boolean mDataActive;
     boolean mNoSim;
@@ -125,7 +125,7 @@ public class NetworkControllerImpl extends BroadcastReceiver
     String mWifiSsid;
     int mWifiIconId = 0;
     int mQSWifiIconId = 0;
-    int mWifiActivityIconId = 0; // overlay arrows for wifi direction
+    int mWifiActivityIconId = 0; // overlay arrows for wifi direction, default Off
     int mWifiActivity = WifiManager.DATA_ACTIVITY_NONE;
 
     // bluetooth
