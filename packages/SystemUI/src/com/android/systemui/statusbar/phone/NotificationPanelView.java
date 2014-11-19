@@ -665,12 +665,14 @@ public class NotificationPanelView extends PanelView implements
                 && mQsExpansionEnabled) {
             mTwoFingerQsExpandPossible = true;
         }
-        boolean noNotifications = event.getActionMasked() == MotionEvent.ACTION_DOWN
-                && shouldQuickSettingsIntercept(event.getX(), event.getY(), -1, false);
         boolean twoFingerExpanding = mTwoFingerQsExpandPossible
                 && event.getActionMasked() == MotionEvent.ACTION_POINTER_DOWN
                 && event.getPointerCount() == 2;
-        if ((twoFingerExpanding || noNotifications)
+        boolean noNotifications = event.getActionMasked() == MotionEvent.ACTION_DOWN
+                && shouldQuickSettingsIntercept(event.getX(), event.getY(), -1, false);
+        boolean oneFingerPullDownOnRight = event.getActionMasked() == MotionEvent.ACTION_DOWN
+                && shouldQuickSettingsIntercept(event.getX(), event.getY(), -1, false, true);
+        if ((twoFingerExpanding || noNotifications || oneFingerPullDownOnRight)
                 && event.getY(event.getActionIndex()) < mStatusBarMinHeight) {
             mTwoFingerQsExpand = true;
             requestPanelHeightUpdate();
@@ -1278,10 +1280,16 @@ public class NotificationPanelView extends PanelView implements
      * @return Whether we should intercept a gesture to open Quick Settings.
      */
     private boolean shouldQuickSettingsIntercept(float x, float y, float yDiff) {
-        return shouldQuickSettingsIntercept(x, y, yDiff, true);
+        return shouldQuickSettingsIntercept(x, y, yDiff, true, false);
     }
 
-    private boolean shouldQuickSettingsIntercept(float x, float y, float yDiff, boolean override) {
+    private boolean shouldQuickSettingsIntercept(float x, float y, float yDiff,
+            boolean override) {
+        return shouldQuickSettingsIntercept(x, y, yDiff, override, false);
+    }
+
+    private boolean shouldQuickSettingsIntercept(float x, float y, float yDiff,
+            boolean override, boolean right) {
         if (!mQsExpansionEnabled) {
             return false;
         }
@@ -1290,13 +1298,15 @@ public class NotificationPanelView extends PanelView implements
                 && x >= header.getLeft() && x <= header.getRight()
                 && y >= header.getTop() && y <= header.getBottom();
 
-        final float w = getMeasuredWidth();
-        float region = (w * (1 / 3f));
-        final boolean showQsOverride = isLayoutRtl() ? (x < region) : (w - region < x);
+        float width = getMeasuredWidth();
+        boolean onRightHotRegion = right && mStatusBarState == StatusBarState.SHADE
+                && x >= (header.getLeft() + (width * (2.0f / 3.0f))) && x <= header.getRight()
+                && y >= header.getTop() && y <= header.getBottom();
+
         if (mQsExpanded) {
             return onHeader || (mScrollView.isScrolledToBottom() && yDiff < 0) && isInQsArea(x, y);
         } else {
-            return onHeader || showQsOverride || (!mKeyguardShowing
+            return onHeader || onRightHotRegion || (!mKeyguardShowing
                     && mNotificationStackScroller.getNotGoneChildCount() == 0);
         }
     }
