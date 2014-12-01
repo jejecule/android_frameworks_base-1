@@ -166,7 +166,7 @@ public class NotificationPanelView extends PanelView implements
     private ObjectAnimator mQsContainerAnimator;
     private ValueAnimator mQsSizeChangeAnimator;
 
-    private boolean mShadeEmpty;
+    private boolean mShadeEmpty = false;
 
     private boolean mQsScrimEnabled = true;
     private boolean mLastAnnouncementWasQuickSettings;
@@ -665,8 +665,12 @@ public class NotificationPanelView extends PanelView implements
                 && mQsExpansionEnabled) {
             mTwoFingerQsExpandPossible = true;
         }
-        if (mTwoFingerQsExpandPossible && event.getActionMasked() == MotionEvent.ACTION_POINTER_DOWN
-                && event.getPointerCount() == 2
+        boolean noNotifications = event.getActionMasked() == MotionEvent.ACTION_DOWN
+                && shouldQuickSettingsIntercept(event.getX(), event.getY(), -1, false);
+        boolean twoFingerExpanding = mTwoFingerQsExpandPossible
+                && event.getActionMasked() == MotionEvent.ACTION_POINTER_DOWN
+                && event.getPointerCount() == 2;
+        if ((twoFingerExpanding || noNotifications)
                 && event.getY(event.getActionIndex()) < mStatusBarMinHeight) {
             mTwoFingerQsExpand = true;
             requestPanelHeightUpdate();
@@ -1081,7 +1085,6 @@ public class NotificationPanelView extends PanelView implements
         mQsContainer.setVisibility(
                 mKeyguardShowing && !expandVisually ? View.INVISIBLE : View.VISIBLE);
         mScrollView.setTouchEnabled(mQsExpanded);
-        updateEmptyShadeView();
         mQsNavbarScrim.setVisibility(mStatusBarState == StatusBarState.SHADE && mQsExpanded
                 && !mStackScrollerOverscrolling && mQsScrimEnabled
                         ? View.VISIBLE
@@ -1275,16 +1278,22 @@ public class NotificationPanelView extends PanelView implements
      * @return Whether we should intercept a gesture to open Quick Settings.
      */
     private boolean shouldQuickSettingsIntercept(float x, float y, float yDiff) {
+        return shouldQuickSettingsIntercept(x, y, yDiff, true);
+    }
+
+    private boolean shouldQuickSettingsIntercept(float x, float y, float yDiff, boolean override) {
         if (!mQsExpansionEnabled) {
             return false;
         }
         View header = mKeyguardShowing ? mKeyguardStatusBar : mHeader;
-        boolean onHeader = x >= header.getLeft() && x <= header.getRight()
+        boolean onHeader = (override || mKeyguardShowing)
+                && x >= header.getLeft() && x <= header.getRight()
                 && y >= header.getTop() && y <= header.getBottom();
         if (mQsExpanded) {
             return onHeader || (mScrollView.isScrolledToBottom() && yDiff < 0) && isInQsArea(x, y);
         } else {
-            return onHeader;
+            return onHeader || (!mKeyguardShowing
+                   && mNotificationStackScroller.getNotGoneChildCount() == 0);
         }
     }
 
@@ -1393,11 +1402,12 @@ public class NotificationPanelView extends PanelView implements
 
         // When only empty shade view is visible in QS collapsed state, simulate that we would have
         // it in expanded QS state as well so we don't run into troubles when fading the view in/out
-        // and expanding/collapsing the whole panel from/to quick settings.
+        // and expanding/collapsing the whole panel from/to quick settings. (Google)
+        // EDIT: We removed the empty shade, so don't consider it anymore. Skyp it hardcoding mShadeEmpty
+        // to false and removing deleted method to get empty shade view. (Carlo)
         if (mNotificationStackScroller.getNotGoneChildCount() == 0
                 && mShadeEmpty) {
-            notificationHeight = mNotificationStackScroller.getEmptyShadeViewHeight()
-                    + mNotificationStackScroller.getBottomStackPeekSize()
+            notificationHeight = mNotificationStackScroller.getBottomStackPeekSize()
                     + mNotificationStackScroller.getCollapseSecondCardPadding();
         }
         int maxQsHeight = mQsMaxExpansionHeight;
@@ -1904,17 +1914,6 @@ public class NotificationPanelView extends PanelView implements
     @Override
     public boolean isDozing() {
         return mDozing;
-    }
-
-    public void setShadeEmpty(boolean shadeEmpty) {
-        mShadeEmpty = shadeEmpty;
-        updateEmptyShadeView();
-    }
-
-    private void updateEmptyShadeView() {
-
-        // Hide "No notifications" in QS.
-        mNotificationStackScroller.updateEmptyShadeView(mShadeEmpty && !mQsExpanded);
     }
 
     public void setQsScrimEnabled(boolean qsScrimEnabled) {

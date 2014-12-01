@@ -139,7 +139,6 @@ import com.android.systemui.statusbar.BaseStatusBar;
 import com.android.systemui.statusbar.CommandQueue;
 import com.android.systemui.statusbar.DismissView;
 import com.android.systemui.statusbar.DragDownHelper;
-import com.android.systemui.statusbar.EmptyShadeView;
 import com.android.systemui.statusbar.ExpandableNotificationRow;
 import com.android.systemui.statusbar.GestureRecorder;
 import com.android.systemui.statusbar.KeyguardIndicationController;
@@ -819,9 +818,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         SpeedBumpView speedBump = (SpeedBumpView) LayoutInflater.from(mContext).inflate(
                         R.layout.status_bar_notification_speed_bump, mStackScroller, false);
         mStackScroller.setSpeedBumpView(speedBump);
-        mEmptyShadeView = (EmptyShadeView) LayoutInflater.from(mContext).inflate(
-                R.layout.status_bar_no_notifications, mStackScroller, false);
-        mStackScroller.setEmptyShadeView(mEmptyShadeView);
         mDismissView = (DismissView) LayoutInflater.from(mContext).inflate(
                 R.layout.status_bar_notification_dismiss_all, mStackScroller, false);
         mDismissView.setOnButtonClickListener(new View.OnClickListener() {
@@ -1679,7 +1675,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         updateRowStates();
         updateSpeedbump();
         updateClearAll();
-        updateEmptyShadeView();
 
         // Disable QS if device not provisioned.
         // If the user switcher is simple then disable QS during setup because
@@ -1699,13 +1694,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 mState != StatusBarState.KEYGUARD &&
                 mNotificationData.hasActiveClearableNotifications();
         mStackScroller.updateDismissView(showDismissView);
-    }
-
-    private void updateEmptyShadeView() {
-        boolean showEmptyShade =
-                mState != StatusBarState.KEYGUARD &&
-                        mNotificationData.getActiveNotifications().size() == 0;
-        mNotificationPanel.setShadeEmpty(showEmptyShade);
     }
 
     private void updateSpeedbump() {

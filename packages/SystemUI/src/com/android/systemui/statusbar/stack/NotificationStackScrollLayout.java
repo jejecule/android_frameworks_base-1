@@ -38,7 +38,6 @@ import com.android.systemui.R;
 import com.android.systemui.SwipeHelper;
 import com.android.systemui.statusbar.ActivatableNotificationView;
 import com.android.systemui.statusbar.DismissView;
-import com.android.systemui.statusbar.EmptyShadeView;
 import com.android.systemui.statusbar.ExpandableNotificationRow;
 import com.android.systemui.statusbar.ExpandableView;
 import com.android.systemui.statusbar.SpeedBumpView;
@@ -162,7 +161,6 @@ public class NotificationStackScrollLayout extends ViewGroup
     private boolean mExpandedInThisMotion;
     private boolean mScrollingEnabled;
     private DismissView mDismissView;
-    private EmptyShadeView mEmptyShadeView;
     private boolean mDismissAllInProgress;
 
     /**
@@ -1303,9 +1301,6 @@ public class NotificationStackScrollLayout extends ViewGroup
         if (mDismissView.willBeGone()) {
             count--;
         }
-        if (mEmptyShadeView.willBeGone()) {
-            count--;
-        }
         return count;
     }
 
@@ -2181,7 +2176,6 @@ public class NotificationStackScrollLayout extends ViewGroup
     public void goToFullShade(long delay) {
         updateSpeedBump(true /* visibility */);
         mDismissView.setInvisible();
-        mEmptyShadeView.setInvisible();
         mGoToFullShadeNeedsAnimation = true;
         mGoToFullShadeDelay = delay;
         mNeedsAnimation = true;
@@ -2260,46 +2254,6 @@ public class NotificationStackScrollLayout extends ViewGroup
         addView(mDismissView);
     }
 
-    public void setEmptyShadeView(EmptyShadeView emptyShadeView) {
-        mEmptyShadeView = emptyShadeView;
-        addView(mEmptyShadeView);
-    }
-
-    public void updateEmptyShadeView(boolean visible) {
-        int oldVisibility = mEmptyShadeView.willBeGone() ? GONE : mEmptyShadeView.getVisibility();
-        int newVisibility = visible ? VISIBLE : GONE;
-        if (oldVisibility != newVisibility) {
-            if (newVisibility != GONE) {
-                if (mEmptyShadeView.willBeGone()) {
-                    mEmptyShadeView.cancelAnimation();
-                } else {
-                    mEmptyShadeView.setInvisible();
-                }
-                mEmptyShadeView.setVisibility(newVisibility);
-                mEmptyShadeView.setWillBeGone(false);
-                updateContentHeight();
-                notifyHeightChangeListener(mDismissView);
-            } else {
-                Runnable onFinishedRunnable = new Runnable() {
-                    @Override
-                    public void run() {
-                        mEmptyShadeView.setVisibility(GONE);
-                        mEmptyShadeView.setWillBeGone(false);
-                        updateContentHeight();
-                        notifyHeightChangeListener(mDismissView);
-                    }
-                };
-                if (mAnimationsEnabled) {
-                    mEmptyShadeView.setWillBeGone(true);
-                    mEmptyShadeView.performVisibilityAnimation(false, onFinishedRunnable);
-                } else {
-                    mEmptyShadeView.setInvisible();
-                    onFinishedRunnable.run();
-                }
-            }
-        }
-    }
-
     public void updateDismissView(boolean visible) {
         int oldVisibility = mDismissView.willBeGone() ? GONE : mDismissView.getVisibility();
         int newVisibility = visible ? VISIBLE : GONE;
@@ -2360,10 +2314,6 @@ public class NotificationStackScrollLayout extends ViewGroup
         return height;
     }
 
-    public int getEmptyShadeViewHeight() {
-        return mEmptyShadeView.getHeight();
-    }
-
     public float getBottomMostNotificationBottom() {
         final int count = getChildCount();
         float max = 0;
@@ -2404,10 +2354,8 @@ public class NotificationStackScrollLayout extends ViewGroup
         if (lastChildNotGone == null) {
             return touchY > mIntrinsicPadding;
         }
-        if (lastChildNotGone != mDismissView && lastChildNotGone != mEmptyShadeView) {
+        if (lastChildNotGone != mDismissView) {
             return touchY > lastChildNotGone.getY() + lastChildNotGone.getActualHeight();
-        } else if (lastChildNotGone == mEmptyShadeView) {
-            return touchY > mEmptyShadeView.getY();
         } else {
             float dismissY = mDismissView.getY();
             boolean belowDismissView = touchY > dismissY + mDismissView.getActualHeight();
