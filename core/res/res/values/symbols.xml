@@ -2309,4 +2309,8 @@
 
   <!-- Proximity check timeout -->
   <java-symbol type="integer" name="config_proximityCheckTimeout" />
+
+  <!-- Package Manager -->
+  <java-symbol type="array" name="config_disabledComponents" />
+
 </resources>
