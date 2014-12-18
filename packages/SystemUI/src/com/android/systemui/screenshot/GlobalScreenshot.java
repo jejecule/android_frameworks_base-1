@@ -38,6 +38,7 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PixelFormat;
 import android.graphics.PointF;
+import android.media.AudioManager;
 import android.media.MediaActionSound;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -393,6 +394,7 @@ class GlobalScreenshot {
     private MediaActionSound mCameraSound;
 
     private final int mSfHwRotation;
+    private final AudioManager mAudioManager;
 
 
     /**
@@ -403,6 +405,8 @@ class GlobalScreenshot {
         mContext = context;
         LayoutInflater layoutInflater = (LayoutInflater)
                 context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+        mAudioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
 
         // Inflate the screenshot layout
         mDisplayMatrix = new Matrix();
@@ -590,7 +594,11 @@ class GlobalScreenshot {
             @Override
             public void run() {
                 // Play the shutter sound to notify that we've taken a screenshot
-                mCameraSound.play(MediaActionSound.SHUTTER_CLICK);
+                // if the media volume is higher than 0
+                int volume = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+                if (volume > 0) {
+                    mCameraSound.play(MediaActionSound.SHUTTER_CLICK);
+                }
 
                 mScreenshotView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
                 mScreenshotView.buildLayer();
