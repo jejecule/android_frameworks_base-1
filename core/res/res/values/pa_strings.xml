@@ -35,6 +35,7 @@
     <string name="reboot">Reboot</string>
     <string name="reboot_recovery">Recovery</string>
     <string name="reboot_bootloader">Bootloader</string>
+    <string name="reboot_download">Download</string>
 
     <!-- Title of an application permission, listed so the user can choose whether they want the application to do this. -->
     <string name="permlab_setKeyguardWallpaper">set keyguard wallpaper</string>
