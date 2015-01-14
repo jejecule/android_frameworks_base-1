@@ -2279,6 +2279,7 @@
     <integer name="launchboost_cpu_6_7_offline_param">0</integer>
     <integer name="launchboost_pcdisbl_param">0</integer>
     <integer name="launchboost_ksmboost_param">0</integer>
+    <integer name="launchboost_preferidle_param">0</integer>
 
    <!-- Activities list for boost -->
    <string-array translatable="false" name="boost_activityList">
