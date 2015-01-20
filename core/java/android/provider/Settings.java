@@ -2565,6 +2565,7 @@ public final class Settings {
         /**
          * Whether the volume slider adjust sound is enabled. The value is
          * boolean (1 or 0).
+         * @hide
          */
         public static final String VOLUME_ADJUST_SOUND_ENABLED = "volume_adjust_sound_enabled";
 
