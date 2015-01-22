@@ -49,13 +49,15 @@ import com.android.systemui.qs.QSTile;
 
 /** Quick settings tile: Roaming switch **/
 public class RoamingTile extends QSTile<QSTile.BooleanState> {
+    public static final String SPEC = "roaming";
+
     private final RoamingObserver mRoamingObserver;
     private boolean mListening = false;
     private boolean mIsForeignState = false;
     private boolean roamingTileVisible = false;
 
     public RoamingTile(Host host) {
-        super(host);
+        super(host, SPEC);
         mRoamingObserver = new RoamingObserver(mHandler);
     }
 
@@ -65,8 +67,13 @@ public class RoamingTile extends QSTile<QSTile.BooleanState> {
     }
 
     @Override
-    public void handleClick() {
+    public void handleToggleClick() {
         setEnabled(!mState.value);
+    }
+
+    @Override
+    protected void handleDetailClick() {
+        handleToggleClick();
     }
 
     private void setEnabled(boolean enabled) {

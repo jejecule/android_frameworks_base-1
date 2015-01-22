@@ -1080,16 +1080,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     mKeyguardMonitor, mSecurityController);
             }
             mQSPanel.setHost(qsh);
-            mQSPanel.setTiles(qsh.getTiles());
-            mBrightnessMirrorController = new BrightnessMirrorController(mStatusBarWindowContent);
-            mQSPanel.setBrightnessMirror(mBrightnessMirrorController);
+            mQSPanel.setBrightnessMirror(mBrightnessMirrorController =
+                    new BrightnessMirrorController(mStatusBarWindowContent));
             mHeader.setQSPanel(mQSPanel);
-            qsh.setCallback(new QSTileHost.Callback() {
-                @Override
-                public void onTilesChanged() {
-                    mQSPanel.setTiles(qsh.getTiles());
-                }
-            });
         }
 
         // task manager

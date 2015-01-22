@@ -27,6 +27,7 @@ import com.android.systemui.qs.QSTile;
 /** Quick settings tile: Control flashlight **/
 public class FlashlightTile extends QSTile<QSTile.BooleanState> implements
         TorchManager.TorchCallback {
+    public static final String SPEC = "flashlight";
 
     /** Grace period for which we consider the flashlight
      * still available because it was recently on. */
@@ -41,7 +42,7 @@ public class FlashlightTile extends QSTile<QSTile.BooleanState> implements
     private boolean mTorchAvailable;
 
     public FlashlightTile(Host host) {
-        super(host);
+        super(host, SPEC);
         mTorchManager = (TorchManager) mContext.getSystemService(Context.TORCH_SERVICE);
         mTorchManager.addListener(this);
         mTorchAvailable = mTorchManager.isAvailable();
@@ -68,13 +69,20 @@ public class FlashlightTile extends QSTile<QSTile.BooleanState> implements
     }
 
     @Override
-    protected void handleClick() {
+    protected void handleToggleClick() {
         if (ActivityManager.isUserAMonkey()) {
             return;
         }
+
         boolean newState = !mState.value;
         mTorchManager.setTorchEnabled(newState);
         refreshState(newState ? UserBoolean.USER_TRUE : UserBoolean.USER_FALSE);
+    }
+
+    @Override
+    protected void handleDetailClick() {
+        // TODO Consider implementing a detail view with configuration
+        handleToggleClick();
     }
 
     @Override
