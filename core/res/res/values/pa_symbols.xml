@@ -72,4 +72,8 @@
 
   <!-- Doze Settings -->
   <java-symbol type="bool" name="config_dozeUseAccelerometer" />
+
+  <!-- Theme reset notification -->
+  <java-symbol type="string" name="theme_reset_notification_title" />
+  <java-symbol type="string" name="theme_reset_notification_body" />
 </resources>
