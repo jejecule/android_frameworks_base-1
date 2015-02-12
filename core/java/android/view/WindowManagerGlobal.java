@@ -217,11 +217,11 @@ public final class WindowManagerGlobal {
         if (parentWindow != null) {
             parentWindow.adjustLayoutParamsForSubWindow(wparams);
         } else {
-            // If there's no parent and we're running on L or above (or in the
-            // system context), assume we want hardware acceleration.
+            // If there's no parent, then hardware acceleration for this view is
+            // set from the application's hardware acceleration setting.
             final Context context = view.getContext();
             if (context != null
-                    && context.getApplicationInfo().targetSdkVersion >= Build.VERSION_CODES.LOLLIPOP) {
+                    && context.getApplicationInfo().hardwareAccelerated) {
                 wparams.flags |= WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED;
             }
         }

@@ -587,6 +587,11 @@ public class ApplicationInfo extends PackageItemInfo implements Parcelable {
      */
     public int installLocation = PackageInfo.INSTALL_LOCATION_UNSPECIFIED;
 
+    /**
+     * True when the application's rendering should be hardware accelerated.
+     */
+    public boolean hardwareAccelerated;
+
     public void dump(Printer pw, String prefix) {
         super.dumpFront(pw, prefix);
         if (className != null) {
@@ -625,6 +630,7 @@ public class ApplicationInfo extends PackageItemInfo implements Parcelable {
         }
         pw.println(prefix + "enabled=" + enabled + " targetSdkVersion=" + targetSdkVersion
                 + " versionCode=" + versionCode);
+        pw.println(prefix + "hardwareAccelerated=" + hardwareAccelerated);
         if (manageSpaceActivityName != null) {
             pw.println(prefix + "manageSpaceActivityName="+manageSpaceActivityName);
         }
@@ -709,6 +715,7 @@ public class ApplicationInfo extends PackageItemInfo implements Parcelable {
         descriptionRes = orig.descriptionRes;
         uiOptions = orig.uiOptions;
         backupAgentName = orig.backupAgentName;
+        hardwareAccelerated = orig.hardwareAccelerated;
     }
 
 
@@ -759,6 +766,7 @@ public class ApplicationInfo extends PackageItemInfo implements Parcelable {
         dest.writeString(backupAgentName);
         dest.writeInt(descriptionRes);
         dest.writeInt(uiOptions);
+        dest.writeInt(hardwareAccelerated ? 1 : 0);
     }
 
     public static final Parcelable.Creator<ApplicationInfo> CREATOR
@@ -808,6 +816,7 @@ public class ApplicationInfo extends PackageItemInfo implements Parcelable {
         backupAgentName = source.readString();
         descriptionRes = source.readInt();
         uiOptions = source.readInt();
+        hardwareAccelerated = source.readInt() != 0;
     }
 
     /**
