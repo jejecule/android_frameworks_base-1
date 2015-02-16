@@ -21,11 +21,16 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.graphics.Matrix;
 import android.graphics.Rect;
+import android.net.Uri;
+import android.os.UserHandle;
+import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.accessibility.AccessibilityEvent;
 import android.widget.FrameLayout;
+import android.widget.PopupMenu;
+
 import com.android.systemui.R;
 import com.android.systemui.recents.Constants;
 import com.android.systemui.recents.RecentsConfiguration;
@@ -525,7 +530,7 @@ public class TaskStackView extends FrameLayout implements TaskStack.TaskStackCal
 
         Task t = mStack.getTasks().get(mFocusedTaskIndex);
         TaskView tv = getChildViewForTask(t);
-        tv.dismissTask();
+        tv.dismissTask(0L);
     }
 
     /** Resets the focused task. */
@@ -538,6 +543,40 @@ public class TaskStackView extends FrameLayout implements TaskStack.TaskStackCal
             }
         }
         mFocusedTaskIndex = -1;
+    }
+
+    public void dismissAllTasks() {
+        post(new Runnable() {
+            @Override
+            public void run() {
+                ArrayList<Task> tasks = new ArrayList<Task>();
+                tasks.addAll(mStack.getTasks());
+
+                // Remove visible TaskViews
+                long dismissDelay = 0;
+                int childCount = getChildCount();
+                int delay = mConfig.taskViewRemoveAnimDuration / childCount;
+                for (int i = 0; i < childCount; i++) {
+                    TaskView tv = (TaskView) getChildAt(i);
+                    tasks.remove(tv.getTask());
+                    tv.dismissTask(dismissDelay);
+                    dismissDelay += delay;
+                }
+
+                int size = tasks.size();
+                // Remove any other Tasks
+                for (int i = 0; i < size; i++) {
+                    Task t = tasks.get(i);
+                    if (mStack.getTasks().contains(t)) {
+                        mStack.removeTask(t);
+                    }
+                }
+
+                // And remove all the excluded or all the other tasks
+                SystemServicesProxy ssp = RecentsTaskLoader.getInstance().getSystemServicesProxy();
+                ssp.removeAllUserTask(UserHandle.myUserId());
+            }
+        });
     }
 
     @Override
@@ -1163,7 +1202,7 @@ public class TaskStackView extends FrameLayout implements TaskStack.TaskStackCal
                         public void run() {
                             mStack.removeTask(t);
                         }
-                    });
+                    }, 0L);
                 } else {
                     // Otherwise, remove the task from the stack immediately
                     mStack.removeTask(t);
