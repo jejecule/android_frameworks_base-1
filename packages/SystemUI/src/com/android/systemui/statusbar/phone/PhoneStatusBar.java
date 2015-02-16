@@ -2083,10 +2083,10 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             // time to show some art!
             if (mBackdrop.getVisibility() != View.VISIBLE) {
                 mBackdrop.setVisibility(View.VISIBLE);
-                mBackdrop.animate().alpha(1f);
+                mBackdrop.setAlpha(1f);
                 metaDataChanged = true;
                 if (DEBUG_MEDIA) {
-                    Log.v(TAG, "DEBUG_MEDIA: Fading in album artwork");
+                    Log.v(TAG, "DEBUG_MEDIA: Applying backdrop bitmap");
                 }
             }
             if (metaDataChanged) {
