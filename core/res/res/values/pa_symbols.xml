@@ -43,7 +43,7 @@
   <java-symbol type="string" name="reboot_title" />
   <java-symbol type="string" name="reboot_recovery" />
   <java-symbol type="string" name="reboot_bootloader" />
-  <java-symbol type="string" name="reboot_confirm" />
+  <java-symbol type="string" name="reboot_confirm" /> 
   <java-symbol type="string" name="reboot_progress" />
 
   <!--Setting confirmation dialog-->
@@ -61,4 +61,7 @@
 
   <!-- Config.xml entries -->
   <java-symbol type="bool" name="config_samsung_stk" />
+
+  <!-- Package Manager -->
+  <java-symbol type="array" name="config_forceEnabledComponents" />
 </resources>
