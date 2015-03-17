@@ -2276,6 +2276,7 @@
     <integer name="launchboost_timeout_param">0x20D</integer>
     <integer name="launchboost_schedboost_param">0</integer>
     <integer name="launchboost_cpuboost_param">600</integer>
+    <integer name="launchboost_cpunumboost_param">0</integer>
     <integer name="launchboost_cpu_6_7_offline_param">0</integer>
     <integer name="launchboost_pcdisbl_param">0</integer>
     <integer name="launchboost_ksmboost_param">0</integer>
