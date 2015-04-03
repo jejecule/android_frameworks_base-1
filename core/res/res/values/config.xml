@@ -2246,7 +2246,6 @@
          service state to display signal strength bars -->
     <bool name="config_combined_signal">true</bool>
 
-<<<<<<< HEAD
     <!-- Whether cpu boost is enabled for both application's 1st launch,subsequent
          launch and in-app-activity -->
     <bool name="config_enableCpuBoostForAppLaunch">false</bool>

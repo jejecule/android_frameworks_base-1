@@ -2257,8 +2257,6 @@
 
   <java-symbol type="bool" name="config_enable_mms_with_mobile_data_off" />
 
-<<<<<<< HEAD
-<<<<<<< HEAD
   <!-- cpu boost for AppLaunch -->
   <java-symbol type="bool" name="config_enableCpuBoostForAppLaunch" />
   <java-symbol type="integer" name="launchboost_timeout_param" />
