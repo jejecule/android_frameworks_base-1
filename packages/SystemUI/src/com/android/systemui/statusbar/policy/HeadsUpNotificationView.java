@@ -65,6 +65,7 @@ public class HeadsUpNotificationView extends FrameLayout implements SwipeHelper.
     private EdgeSwipeHelper mEdgeSwipeHelper;
 
     private PhoneStatusBar mBar;
+    private ExpandHelper mExpandHelper;
 
     private long mStartTouchTime;
     private ViewGroup mContentHolder;
@@ -260,6 +261,7 @@ public class HeadsUpNotificationView extends FrameLayout implements SwipeHelper.
 
         int minHeight = getResources().getDimensionPixelSize(R.dimen.notification_min_height);
         int maxHeight = getResources().getDimensionPixelSize(R.dimen.notification_max_height);
+        mExpandHelper = new ExpandHelper(getContext(), this, minHeight, maxHeight);
 
         mContentHolder = (ViewGroup) findViewById(R.id.content_holder);
         mContentHolder.setOutlineProvider(CONTENT_HOLDER_OUTLINE_PROVIDER);
