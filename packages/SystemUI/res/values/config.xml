@@ -337,10 +337,10 @@
     <!-- Enable the default volume dialog -->
     <bool name="enable_volume_ui">true</bool>
 
-    <bool name="config_enablePerfBoostForShutterAnimation">false</bool>
-    <integer name="shutteranimationboost_timeout_param">0</integer>
+    <bool name="config_enablePerfBoostForShutterAnimation">true</bool>
+    <integer name="shutteranimationboost_timeout_param">50</integer>
     <integer name="shutteranimationboost_schedboost_param">0</integer>
-    <integer name="shutteranimationboost_cpuboost_param">0</integer>
+    <integer name="shutteranimationboost_cpuboost_param">0x20D</integer>
 
 </resources>
 
