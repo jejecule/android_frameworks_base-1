@@ -3066,6 +3066,7 @@ public final class Settings {
          * default: 0
          * @hide
          */
+        public static final String STATUS_BAR_BATTERY_STYLE = "status_bar_battery_style";
 
         /**
          * Locale for secondary overlay on dialer for t9 search input
