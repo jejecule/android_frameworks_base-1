@@ -3413,12 +3413,6 @@ public final class Settings {
          */
         public static final String HEADSET_CONNECT_PLAYER = "headset_connect_player";
 
-        /**
-         * Whether or not to launch default music player when headset is connected
-         * @hide
-         */
-        public static final String HEADSET_CONNECT_PLAYER = "headset_connect_player";
-
     }
 
     /**
