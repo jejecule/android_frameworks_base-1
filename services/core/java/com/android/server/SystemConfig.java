@@ -18,6 +18,7 @@ package com.android.server;
 
 import android.app.ActivityManager;
 import android.content.pm.FeatureInfo;
+import android.content.pm.Signature;
 import android.os.*;
 import android.os.Process;
 import android.util.ArrayMap;
