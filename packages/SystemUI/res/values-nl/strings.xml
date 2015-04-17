@@ -29,7 +29,6 @@
     <item quantity="one" msgid="3969335317929254918">"1 scherm in Overzicht"</item>
     <item quantity="other" msgid="5523506463832158203">"%d schermen in Overzicht"</item>
   </plurals>
-    <string name="status_bar_no_notifications_title" msgid="4755261167193833213">"Geen meldingen"</string>
     <string name="status_bar_ongoing_events_title" msgid="1682504513316879202">"Actief"</string>
     <string name="status_bar_latest_events_title" msgid="6594767438577593172">"Meldingen"</string>
     <string name="battery_low_title" msgid="6456385927409742437">"Accu is bijna leeg"</string>
@@ -328,7 +327,6 @@
     <string name="media_projection_remember_text" msgid="3103510882172746752">"Niet opnieuw weergeven"</string>
     <string name="clear_all_notifications_text" msgid="814192889771462828">"Alles wissen"</string>
     <string name="media_projection_action_text" msgid="8470872969457985954">"Nu starten"</string>
-    <string name="empty_shade_text" msgid="708135716272867002">"Geen meldingen"</string>
     <string name="device_owned_footer" msgid="3802752663326030053">"Apparaat wordt mogelijk gecontroleerd"</string>
     <string name="profile_owned_footer" msgid="8021888108553696069">"Profiel kan worden gecontroleerd"</string>
     <string name="vpn_footer" msgid="2388611096129106812">"Netwerk kan worden gecontroleerd"</string>

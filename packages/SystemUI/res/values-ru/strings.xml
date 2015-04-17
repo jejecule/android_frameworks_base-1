@@ -29,7 +29,6 @@
     <item quantity="one" msgid="3969335317929254918">"В обзоре 1 экран."</item>
     <item quantity="other" msgid="5523506463832158203">"Экранов в обзоре: %d."</item>
   </plurals>
-    <string name="status_bar_no_notifications_title" msgid="4755261167193833213">"Нет уведомлений"</string>
     <string name="status_bar_ongoing_events_title" msgid="1682504513316879202">"Текущие"</string>
     <string name="status_bar_latest_events_title" msgid="6594767438577593172">"Уведомления"</string>
     <string name="battery_low_title" msgid="6456385927409742437">"Батарея почти разряжена"</string>
@@ -330,7 +329,6 @@
     <string name="media_projection_remember_text" msgid="3103510882172746752">"Больше не показывать"</string>
     <string name="clear_all_notifications_text" msgid="814192889771462828">"Очистить все"</string>
     <string name="media_projection_action_text" msgid="8470872969457985954">"Начать"</string>
-    <string name="empty_shade_text" msgid="708135716272867002">"Нет уведомлений"</string>
     <string name="device_owned_footer" msgid="3802752663326030053">"Устройство может контролироваться"</string>
     <string name="profile_owned_footer" msgid="8021888108553696069">"Действия в профиле могут отслеживаться"</string>
     <string name="vpn_footer" msgid="2388611096129106812">"Сеть может отслеживаться"</string>

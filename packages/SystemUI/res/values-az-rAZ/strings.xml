@@ -29,7 +29,6 @@
     <item quantity="one" msgid="5854176083865845541">"1 son tətbiq"</item>
     <item quantity="other" msgid="1040784359794890744">"%d son tətbiq"</item>
   </plurals>
-    <string name="status_bar_no_notifications_title" msgid="4755261167193833213">"Bildiriş yoxdu"</string>
     <string name="status_bar_ongoing_events_title" msgid="1682504513316879202">"Davam edir"</string>
     <string name="status_bar_latest_events_title" msgid="6594767438577593172">"Bildirişlər"</string>
     <string name="battery_low_title" msgid="2783104807551211639">"Adapteri qoşun"</string>
