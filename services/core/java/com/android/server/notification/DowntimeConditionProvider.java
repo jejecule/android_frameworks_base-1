@@ -79,6 +79,7 @@ public class DowntimeConditionProvider extends ConditionProviderService {
     private boolean mDowntimed;
     private boolean mConditionClearing;
     private boolean mRequesting;
+    private boolean mPrevSleepNone;
 
     public DowntimeConditionProvider(ConditionProviders conditionProviders,
             NextAlarmTracker tracker, ZenModeHelper zenModeHelper) {
@@ -312,7 +313,7 @@ public class DowntimeConditionProvider extends ConditionProviderService {
             skipReason = "no config";
         } else if (mDowntimed) {
             skipReason = "already downtimed";
-        } else if (mZenModeHelper.getZenMode() != Global.ZEN_MODE_OFF) {
+        } else if (mZenModeHelper.getZenMode() != Global.ZEN_MODE_OFF && mPrevSleepNone == mConfig.sleepNone) {
             skipReason = "already in zen";
         } else if (!mCalendar.isInDowntime(System.currentTimeMillis())) {
             skipReason = "not in downtime";
@@ -322,6 +323,7 @@ public class DowntimeConditionProvider extends ConditionProviderService {
             return;
         }
         ZenLog.traceDowntimeAutotrigger("Autotrigger fired");
+        mPrevSleepNone = mConfig.sleepNone;
         mZenModeHelper.setZenMode(mConfig.sleepNone ? Global.ZEN_MODE_NO_INTERRUPTIONS
                 : Global.ZEN_MODE_IMPORTANT_INTERRUPTIONS, "downtime");
         final Condition condition = createCondition(mConfig.toDowntimeInfo(), Condition.STATE_TRUE);
