@@ -29,7 +29,6 @@
     <item quantity="one" msgid="3969335317929254918">"सारांशमा 1 पर्दा"</item>
     <item quantity="other" msgid="5523506463832158203">"सारांशमा %d पर्दाहरू"</item>
   </plurals>
-    <string name="status_bar_no_notifications_title" msgid="4755261167193833213">"कुनै सूचनाहरू छैन"</string>
     <string name="status_bar_ongoing_events_title" msgid="1682504513316879202">"चलिरहेको"</string>
     <string name="status_bar_latest_events_title" msgid="6594767438577593172">"सूचनाहरू"</string>
     <string name="battery_low_title" msgid="6456385927409742437">"ब्याट्रि कम छ"</string>
@@ -328,7 +327,6 @@
     <string name="media_projection_remember_text" msgid="3103510882172746752">"फेरि नदेखाउनुहोस्"</string>
     <string name="clear_all_notifications_text" msgid="814192889771462828">"सबै हटाउनुहोस्"</string>
     <string name="media_projection_action_text" msgid="8470872969457985954">"अहिले सुरु गर्नुहोस्"</string>
-    <string name="empty_shade_text" msgid="708135716272867002">"कुनै सूचनाहरू छैनन्"</string>
     <string name="device_owned_footer" msgid="3802752663326030053">"उपकरण अनुगमन हुन सक्छ"</string>
     <string name="profile_owned_footer" msgid="8021888108553696069">"प्रोफाइल अनुगमन हुन सक्छ"</string>
     <string name="vpn_footer" msgid="2388611096129106812">"सञ्जाल अनुगमित हुन सक्छ"</string>

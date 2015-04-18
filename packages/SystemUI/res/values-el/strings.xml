@@ -29,7 +29,6 @@
     <item quantity="one" msgid="3969335317929254918">"1 οθόνη στην Επισκόπηση"</item>
     <item quantity="other" msgid="5523506463832158203">"%d οθόνες στην Επισκόπηση"</item>
   </plurals>
-    <string name="status_bar_no_notifications_title" msgid="4755261167193833213">"Δεν υπάρχουν ειδοποιήσεις"</string>
     <string name="status_bar_ongoing_events_title" msgid="1682504513316879202">"Εν εξελίξει"</string>
     <string name="status_bar_latest_events_title" msgid="6594767438577593172">"Ειδοποιήσεις"</string>
     <string name="battery_low_title" msgid="6456385927409742437">"Χαμηλή στάθμη μπαταρίας"</string>
@@ -330,7 +329,6 @@
     <string name="media_projection_remember_text" msgid="3103510882172746752">"Να μην εμφανιστεί ξανά"</string>
     <string name="clear_all_notifications_text" msgid="814192889771462828">"Διαγραφή όλων"</string>
     <string name="media_projection_action_text" msgid="8470872969457985954">"Έναρξη τώρα"</string>
-    <string name="empty_shade_text" msgid="708135716272867002">"Δεν υπάρχουν ειδοποιήσεις"</string>
     <string name="device_owned_footer" msgid="3802752663326030053">"Η συσκευή μπορεί να παρακολουθείται"</string>
     <string name="profile_owned_footer" msgid="8021888108553696069">"Το προφίλ ενδέχεται να παρακολουθείται"</string>
     <string name="vpn_footer" msgid="2388611096129106812">"Το δίκτυο ενδέχεται να παρακολουθείται"</string>
