@@ -292,8 +292,8 @@ public class VolumePanel extends Handler implements DemoMode {
     private ContentObserver mSettingsObserver = new ContentObserver(this) {
         @Override
         public void onChange(boolean selfChange) {
-            mVolumeLinkNotification = Settings.Secure.getInt(mContext.getContentResolver(),
-                    Settings.Secure.VOLUME_LINK_NOTIFICATION, 1) == 1;
+            mVolumeLinkNotification = Settings.System.getInt(mContext.getContentResolver(),
+                    Settings.System.VOLUME_LINK_NOTIFICATION, 1) == 1;
         }
     };
 
@@ -465,11 +465,11 @@ public class VolumePanel extends Handler implements DemoMode {
         mHasVibrator = mVibrator != null && mVibrator.hasVibrator();
         mVoiceCapable = context.getResources().getBoolean(R.bool.config_voice_capable);
 
-        mVolumeLinkNotification = Settings.Secure.getInt(mContext.getContentResolver(),
-                Settings.Secure.VOLUME_LINK_NOTIFICATION, 1) == 1;
+        mVolumeLinkNotification = Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.VOLUME_LINK_NOTIFICATION, 1) == 1;
 
         context.getContentResolver().registerContentObserver(
-                Settings.Secure.getUriFor(Settings.Secure.VOLUME_LINK_NOTIFICATION), false,
+                Settings.System.getUriFor(Settings.System.VOLUME_LINK_NOTIFICATION), false,
                 mSettingsObserver);
 
         if (mZenController != null && !useMasterVolume) {
