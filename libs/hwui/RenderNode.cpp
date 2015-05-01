@@ -148,7 +148,7 @@ void RenderNode::addAnimator(const sp<BaseRenderNodeAnimator>& animator) {
 }
 
 void RenderNode::damageSelf(TreeInfo& info) {
-    if (isRenderable()) {
+    if (isRenderable() || mNeedsDisplayListDataSync) {
         if (properties().getClipDamageToBounds()) {
             info.damageAccumulator->dirty(0, 0, properties().getWidth(), properties().getHeight());
         } else {
@@ -293,7 +293,6 @@ void RenderNode::applyLayerPropertiesToLayer(TreeInfo& info) {
 
 void RenderNode::pushStagingDisplayListChanges(TreeInfo& info) {
     if (mNeedsDisplayListDataSync) {
-        mNeedsDisplayListDataSync = false;
         // Make sure we inc first so that we don't fluctuate between 0 and 1,
         // which would thrash the layer cache
         if (mStagingDisplayListData) {
@@ -317,6 +316,7 @@ void RenderNode::pushStagingDisplayListChanges(TreeInfo& info) {
             }
         }
         damageSelf(info);
+        mNeedsDisplayListDataSync = false;
     }
 }
 
