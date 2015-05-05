@@ -463,7 +463,8 @@ public class VolumePanel extends Handler implements DemoMode {
         mToneGenerators = new ToneGenerator[AudioSystem.getNumStreamTypes()];
         mVibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
         mHasVibrator = mVibrator != null && mVibrator.hasVibrator();
-        mVoiceCapable = context.getResources().getBoolean(R.bool.config_voice_capable);
+        mVoiceCapable = context.getResources().getBoolean(
+                            com.android.internal.R.bool.config_voice_capable);
 
         mVolumeLinkNotification = Settings.System.getInt(mContext.getContentResolver(),
                 Settings.System.VOLUME_LINK_NOTIFICATION, 1) == 1;
@@ -859,7 +860,9 @@ public class VolumePanel extends Handler implements DemoMode {
     private boolean isValidExpandedPanelControl(int streamType) {
         switch (streamType) {
             case AudioManager.STREAM_NOTIFICATION:
-                if (mVoiceCapable && mVolumeLinkNotification) {
+                if (! mVoiceCapable) {
+                    return true;
+                } else if (mVoiceCapable && mVolumeLinkNotification) {
                     return false;
                 }
             case AudioManager.STREAM_RING:
