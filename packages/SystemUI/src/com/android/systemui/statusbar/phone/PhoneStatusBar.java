@@ -46,8 +46,8 @@ import android.app.StatusBarManager;
 import android.app.WallpaperManager;
 import android.content.ComponentCallbacks2;
 import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
@@ -2207,7 +2207,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
     public void setClockAndDateStatus(int width, int mode, boolean enabled) {
         if (mNotificationIcons != null) {
-            mNotificationIcons.setClockAndDateWidth(width, mode);
+            mNotificationIcons.setClockAndDateStatus(width, mode, enabled);
         }
         mClockLocation = mode;
         mShowClock = enabled;
