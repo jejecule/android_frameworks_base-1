@@ -201,10 +201,10 @@ static JNINativeMethod gMethods[] = {
     {"native_cleanup",              "()V",  (void *)android_mtp_MtpServer_cleanup},
     {"native_send_object_added",    "(I)V", (void *)android_mtp_MtpServer_send_object_added},
     {"native_send_object_removed",  "(I)V", (void *)android_mtp_MtpServer_send_object_removed},
-    #ifdef VENDOR_EDIT
+    //#ifdef VENDOR_EDIT
     //lijianpeng, 2015/03/30,Added for MTP object update support
     {"native_send_object_updated",  "(I)V", (void *)android_mtp_MtpServer_send_object_updated},
-    #endif VENDOR_EDIT
+    //#endif VENDOR_EDIT
     {"native_send_device_property_changed",  "(I)V",
                                     (void *)android_mtp_MtpServer_send_device_property_changed},
     {"native_add_storage",          "(Landroid/mtp/MtpStorage;)V",
