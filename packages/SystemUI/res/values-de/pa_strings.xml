@@ -18,7 +18,7 @@
  */
  -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-  <string name="delete">Entfernen</string>
+  <string name="delete">Löschen</string>
   <string name="screenshot_delete_confirmation">Screenshot gelöscht</string>
   <string name="interruption_level_silent">Lautlos</string>
   <string name="zen_silent_with_warning">Keine Unterbrechungen, außer Alarme.</string>
@@ -29,11 +29,12 @@
   <string name="quick_settings_location_gps_only_label">Nur GPS</string>
   <string name="quick_settings_location_high_accuracy_label">Hohe Genauigkeit</string>
   <string name="quick_settings_location_detail_title">Standort</string>
-  <string name="quick_settings_location_detail_menu_title">Wählen Sie Modus:</string>
+  <string name="quick_settings_location_detail_menu_title">Modus:</string>
   <string name="quick_settings_location_detail_mode_high_accuracy_title">Hohe Genauigkeit</string>
   <string name="quick_settings_location_detail_mode_battery_saving_title">Energiesparmodus</string>
   <string name="quick_settings_location_detail_mode_sensors_only_title">Nur Gerät</string>
   <string name="quick_settings_location_detail_mode_high_accuracy_description">GPS, Wi\u2011Fi- und Mobilfunknetze zur Standortbestimmung verwenden </string>
   <string name="quick_settings_location_detail_mode_battery_saving_description">Wi\u2011Fi- und Mobilfunknetze zur Standortbestimmung verwenden</string>
   <string name="quick_settings_location_detail_mode_sensors_only_description">GPS zur Standortbestimmung verwenden</string>
+  <string name="heads_up_snooze_message">Heads-Up ist für <xliff:g id="number">%d</xliff:g> Minuten deaktiviert.</string>
 </resources>

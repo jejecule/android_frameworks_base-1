@@ -22,18 +22,19 @@
   <string name="screenshot_delete_confirmation">Screenshot verwijderd</string>
   <string name="interruption_level_silent">Stil</string>
   <string name="zen_silent_with_warning">Geen onderbrekingen, behalve alarm.</string>
-  <string name="accessibility_quick_settings_location_battery_saving">Location reporting: battery saving mode.</string>
-  <string name="accessibility_quick_settings_location_gps_only">Location reporting: sensors only mode.</string>
-  <string name="accessibility_quick_settings_location_high_accuracy">Location reporting: high accuracy mode.</string>
+  <string name="accessibility_quick_settings_location_battery_saving">Locatiemodus: accubesparing.</string>
+  <string name="accessibility_quick_settings_location_gps_only">Locatiemodus: alleen apparaat.</string>
+  <string name="accessibility_quick_settings_location_high_accuracy">Locatiemodus: grote nauwkeurigheid.</string>
   <string name="quick_settings_location_battery_saving_label">Batterij besparing</string>
   <string name="quick_settings_location_gps_only_label">Alleen GPS</string>
   <string name="quick_settings_location_high_accuracy_label">Hoge nauwkeurigheid</string>
   <string name="quick_settings_location_detail_title">Locatie</string>
   <string name="quick_settings_location_detail_menu_title">Selecteer modus:</string>
   <string name="quick_settings_location_detail_mode_high_accuracy_title">Hoge nauwkeurigheid</string>
-  <string name="quick_settings_location_detail_mode_battery_saving_title">Battery saving</string>
-  <string name="quick_settings_location_detail_mode_sensors_only_title">Apparaat</string>
-  <string name="quick_settings_location_detail_mode_high_accuracy_description">Gebruik GPS, WI\u2011Fi en mobiele netwerken om locatie te bepalen </string>
-  <string name="quick_settings_location_detail_mode_battery_saving_description">Use Wi\u2011Fi and cellular networks to determine location</string>
+  <string name="quick_settings_location_detail_mode_battery_saving_title">Accubesparing</string>
+  <string name="quick_settings_location_detail_mode_sensors_only_title">Alleen Apparaat</string>
+  <string name="quick_settings_location_detail_mode_high_accuracy_description">Gebruik GPS, WI-Fi en mobiele netwerken om locatie te bepalen </string>
+  <string name="quick_settings_location_detail_mode_battery_saving_description">Wi-Fi en mobiele netwerken gebruiken om locatie te bepalen</string>
   <string name="quick_settings_location_detail_mode_sensors_only_description">Gebruik GPS om je locatie te bepalen</string>
+  <string name="heads_up_snooze_message">Heads up is uitgeschakeld voor <xliff:g id="number">%d</xliff:g> minuten.</string>
 </resources>

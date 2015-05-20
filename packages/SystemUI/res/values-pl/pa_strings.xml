@@ -25,15 +25,16 @@
   <string name="accessibility_quick_settings_location_battery_saving">Lokalizacja:oszczędzanie baterii</string>
   <string name="accessibility_quick_settings_location_gps_only">Lokalizacja:tylko urządzenie</string>
   <string name="accessibility_quick_settings_location_high_accuracy">Lokalizacja: wysoka dokładność</string>
-  <string name="quick_settings_location_battery_saving_label">Oszczędność baterii</string>
+  <string name="quick_settings_location_battery_saving_label">Oszczędzanie baterii</string>
   <string name="quick_settings_location_gps_only_label">Tylko GPS</string>
   <string name="quick_settings_location_high_accuracy_label">Wysoka dokładność</string>
   <string name="quick_settings_location_detail_title">Lokalizacja</string>
-  <string name="quick_settings_location_detail_menu_title">Wybierz tryb:</string>
+  <string name="quick_settings_location_detail_menu_title">Tryb wyboru:</string>
   <string name="quick_settings_location_detail_mode_high_accuracy_title">Wysoka dokładność</string>
-  <string name="quick_settings_location_detail_mode_battery_saving_title">Oszczędność baterii</string>
+  <string name="quick_settings_location_detail_mode_battery_saving_title">Oszczędzanie baterii</string>
   <string name="quick_settings_location_detail_mode_sensors_only_title">Tylko urządzenie</string>
   <string name="quick_settings_location_detail_mode_high_accuracy_description">Określają lokalizacje według GPS-u,sieci komórkowej i Wi-Fi</string>
   <string name="quick_settings_location_detail_mode_battery_saving_description">Określają lokalizację według sieci komórkowej i Wi-Fi</string>
   <string name="quick_settings_location_detail_mode_sensors_only_description">Określaj lokalizacje przez GPS</string>
+  <string name="heads_up_snooze_message">Wyskakujące powiadomienia są wyłączone na <xliff:g id="number">%d</xliff:g> minut.</string>
 </resources>

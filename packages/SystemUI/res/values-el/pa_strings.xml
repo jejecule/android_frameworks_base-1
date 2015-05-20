@@ -36,4 +36,5 @@
   <string name="quick_settings_location_detail_mode_high_accuracy_description">Χρήση GPS, Wi\u2011Fi, και δίκτυα κινητής τηλεφωνίας για τον προσδιορισμό της τοποθεσίας </string>
   <string name="quick_settings_location_detail_mode_battery_saving_description">Χρήση GPS, Wi\u2011Fi, και δίκτυα κινητής τηλεφωνίας για τον προσδιορισμό της τοποθεσίας</string>
   <string name="quick_settings_location_detail_mode_sensors_only_description">Χρήση GPS για τον προσδιορισμό της τοποθεσίας</string>
+  <string name="heads_up_snooze_message">Το Heads up είναι απενεργοποιημένο για <xliff:g id="number"> %d </xliff:g> λεπτά.</string>
 </resources>

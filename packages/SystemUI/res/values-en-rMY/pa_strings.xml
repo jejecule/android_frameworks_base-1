@@ -18,22 +18,23 @@
  */
  -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-  <string name="delete">Delete</string>
-  <string name="screenshot_delete_confirmation">Screenshot deleted</string>
-  <string name="interruption_level_silent">Silent</string>
-  <string name="zen_silent_with_warning">No interruptions, except alarms.</string>
-  <string name="accessibility_quick_settings_location_battery_saving">Location reporting: battery saving mode.</string>
-  <string name="accessibility_quick_settings_location_gps_only">Location reporting: sensors only mode.</string>
-  <string name="accessibility_quick_settings_location_high_accuracy">Location reporting: high accuracy mode.</string>
-  <string name="quick_settings_location_battery_saving_label">Battery saving</string>
-  <string name="quick_settings_location_gps_only_label">GPS only</string>
-  <string name="quick_settings_location_high_accuracy_label">High accuracy</string>
-  <string name="quick_settings_location_detail_title">Location</string>
-  <string name="quick_settings_location_detail_menu_title">Select mode:</string>
-  <string name="quick_settings_location_detail_mode_high_accuracy_title">High accuracy</string>
-  <string name="quick_settings_location_detail_mode_battery_saving_title">Battery saving</string>
-  <string name="quick_settings_location_detail_mode_sensors_only_title">Device only</string>
-  <string name="quick_settings_location_detail_mode_high_accuracy_description">Use GPS, Wi\u2011Fi, and cellular networks to determine location </string>
-  <string name="quick_settings_location_detail_mode_battery_saving_description">Use Wi\u2011Fi and cellular networks to determine location</string>
-  <string name="quick_settings_location_detail_mode_sensors_only_description">Use GPS to determine your location</string>
+  <string name="delete">Padam</string>
+  <string name="screenshot_delete_confirmation">screenshot dipadam</string>
+  <string name="interruption_level_silent">senyap</string>
+  <string name="zen_silent_with_warning">Tiada gangguan, kecuali penggera.</string>
+  <string name="accessibility_quick_settings_location_battery_saving">Laporan Lokasi : mod ​​penjimatan bateri.</string>
+  <string name="accessibility_quick_settings_location_gps_only">Laporan Lokasi : sensor hanya mod .</string>
+  <string name="accessibility_quick_settings_location_high_accuracy">Laporan Lokasi : mod ​​ketepatan yang tinggi.</string>
+  <string name="quick_settings_location_battery_saving_label">bateri penjimatan</string>
+  <string name="quick_settings_location_gps_only_label">Hanya GPS</string>
+  <string name="quick_settings_location_high_accuracy_label">ketepatan yang tinggi</string>
+  <string name="quick_settings_location_detail_title">Lokasi</string>
+  <string name="quick_settings_location_detail_menu_title">Pilih mod :</string>
+  <string name="quick_settings_location_detail_mode_high_accuracy_title">ketepatan yang tinggi</string>
+  <string name="quick_settings_location_detail_mode_battery_saving_title">bateri penjimatan</string>
+  <string name="quick_settings_location_detail_mode_sensors_only_title">peranti sahaja</string>
+  <string name="quick_settings_location_detail_mode_high_accuracy_description">Gunakan GPS, Wi \ u2011Fi , dan rangkaian selular untuk menentukan lokasi</string>
+  <string name="quick_settings_location_detail_mode_battery_saving_description">Gunakan Wi \ u2011Fi dan rangkaian selular untuk menentukan lokasi</string>
+  <string name="quick_settings_location_detail_mode_sensors_only_description">Gunakan GPS untuk menentukan lokasi anda</string>
+  <string name="heads_up_snooze_message">Ekor dilumpuhkan untuk <xliff:g id = " nombor">% d </xliff:g> minit.</string>
 </resources>

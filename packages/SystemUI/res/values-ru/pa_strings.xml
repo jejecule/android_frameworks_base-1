@@ -36,4 +36,5 @@
   <string name="quick_settings_location_detail_mode_high_accuracy_description">Использовать GPS, Wi\u2011Fi и мобильные сети для определения местоположения</string>
   <string name="quick_settings_location_detail_mode_battery_saving_description">Использовать Wi\u2011Fi и мобильные сети для определения местоположения</string>
   <string name="quick_settings_location_detail_mode_sensors_only_description">Использовать только GPS для определения местоположения</string>
+  <string name="heads_up_snooze_message">Всплывающие уведомления отключены на <xliff:g id="number">%d </xliff:g> минут.</string>
 </resources>

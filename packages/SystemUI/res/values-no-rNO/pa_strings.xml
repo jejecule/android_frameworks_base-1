@@ -18,22 +18,23 @@
  */
  -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-  <string name="delete">Delete</string>
+  <string name="delete">Slett</string>
   <string name="screenshot_delete_confirmation">Skjermbilde slettet</string>
-  <string name="interruption_level_silent">Silent</string>
-  <string name="zen_silent_with_warning">No interruptions, except alarms.</string>
-  <string name="accessibility_quick_settings_location_battery_saving">Location reporting: battery saving mode.</string>
-  <string name="accessibility_quick_settings_location_gps_only">Location reporting: sensors only mode.</string>
-  <string name="accessibility_quick_settings_location_high_accuracy">Location reporting: high accuracy mode.</string>
-  <string name="quick_settings_location_battery_saving_label">Battery saving</string>
-  <string name="quick_settings_location_gps_only_label">GPS only</string>
-  <string name="quick_settings_location_high_accuracy_label">High accuracy</string>
-  <string name="quick_settings_location_detail_title">Location</string>
-  <string name="quick_settings_location_detail_menu_title">Select mode:</string>
-  <string name="quick_settings_location_detail_mode_high_accuracy_title">High accuracy</string>
-  <string name="quick_settings_location_detail_mode_battery_saving_title">Battery saving</string>
-  <string name="quick_settings_location_detail_mode_sensors_only_title">Device only</string>
-  <string name="quick_settings_location_detail_mode_high_accuracy_description">Use GPS, Wi\u2011Fi, and cellular networks to determine location </string>
-  <string name="quick_settings_location_detail_mode_battery_saving_description">Use Wi\u2011Fi and cellular networks to determine location</string>
-  <string name="quick_settings_location_detail_mode_sensors_only_description">Use GPS to determine your location</string>
+  <string name="interruption_level_silent">Stille</string>
+  <string name="zen_silent_with_warning">Ingen avbrudd, unntatt alarmer.</string>
+  <string name="accessibility_quick_settings_location_battery_saving">Posisjonssrapportering: strømsparemodus.</string>
+  <string name="accessibility_quick_settings_location_gps_only">Posisjonsrapportering: sensor modus.</string>
+  <string name="accessibility_quick_settings_location_high_accuracy">Posisjonsrapportering: høy nøyaktighet modus.</string>
+  <string name="quick_settings_location_battery_saving_label">Batterisparing</string>
+  <string name="quick_settings_location_gps_only_label">Kun GPS</string>
+  <string name="quick_settings_location_high_accuracy_label">Høy nøyaktighet</string>
+  <string name="quick_settings_location_detail_title">Posisjon</string>
+  <string name="quick_settings_location_detail_menu_title">Velg modus:</string>
+  <string name="quick_settings_location_detail_mode_high_accuracy_title">Høy nøyaktighet</string>
+  <string name="quick_settings_location_detail_mode_battery_saving_title">Batterisparing</string>
+  <string name="quick_settings_location_detail_mode_sensors_only_title">Kun enhet</string>
+  <string name="quick_settings_location_detail_mode_high_accuracy_description">Bruk GPS, Wi\u2011Fi og mobilt nettverk for å avgjøre plassering </string>
+  <string name="quick_settings_location_detail_mode_battery_saving_description">Bruk Wi\u2011Fi og mobilt nettverk for å avgjøre plassering</string>
+  <string name="quick_settings_location_detail_mode_sensors_only_description">Bruk GPS for å avgjøre plassering</string>
+  <string name="heads_up_snooze_message">Heads-up er deaktivert i <xliff:g id="number">%d </xliff:g> minutter.</string>
 </resources>

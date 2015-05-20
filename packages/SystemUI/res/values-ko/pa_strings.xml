@@ -18,22 +18,23 @@
  */
  -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-  <string name="delete">Delete</string>
+  <string name="delete">삭제</string>
   <string name="screenshot_delete_confirmation">스크린샷이 삭제되었습니다.</string>
-  <string name="interruption_level_silent">Silent</string>
-  <string name="zen_silent_with_warning">No interruptions, except alarms.</string>
-  <string name="accessibility_quick_settings_location_battery_saving">Location reporting: battery saving mode.</string>
-  <string name="accessibility_quick_settings_location_gps_only">Location reporting: sensors only mode.</string>
-  <string name="accessibility_quick_settings_location_high_accuracy">Location reporting: high accuracy mode.</string>
-  <string name="quick_settings_location_battery_saving_label">Battery saving</string>
-  <string name="quick_settings_location_gps_only_label">GPS only</string>
-  <string name="quick_settings_location_high_accuracy_label">High accuracy</string>
-  <string name="quick_settings_location_detail_title">Location</string>
-  <string name="quick_settings_location_detail_menu_title">Select mode:</string>
-  <string name="quick_settings_location_detail_mode_high_accuracy_title">High accuracy</string>
-  <string name="quick_settings_location_detail_mode_battery_saving_title">Battery saving</string>
-  <string name="quick_settings_location_detail_mode_sensors_only_title">Device only</string>
-  <string name="quick_settings_location_detail_mode_high_accuracy_description">Use GPS, Wi\u2011Fi, and cellular networks to determine location </string>
-  <string name="quick_settings_location_detail_mode_battery_saving_description">Use Wi\u2011Fi and cellular networks to determine location</string>
-  <string name="quick_settings_location_detail_mode_sensors_only_description">Use GPS to determine your location</string>
+  <string name="interruption_level_silent">무음</string>
+  <string name="zen_silent_with_warning">알람을 제외한 나머지를 중단합니다</string>
+  <string name="accessibility_quick_settings_location_battery_saving">위치 확인: 배터리 절약 모드.</string>
+  <string name="accessibility_quick_settings_location_gps_only">위치 확인: 센서 전용 모드.</string>
+  <string name="accessibility_quick_settings_location_high_accuracy">위치 확인: 고감도 모드.</string>
+  <string name="quick_settings_location_battery_saving_label">배터리 절약</string>
+  <string name="quick_settings_location_gps_only_label">GPS만</string>
+  <string name="quick_settings_location_high_accuracy_label">높은 정확성</string>
+  <string name="quick_settings_location_detail_title">위치</string>
+  <string name="quick_settings_location_detail_menu_title">모드 선택:</string>
+  <string name="quick_settings_location_detail_mode_high_accuracy_title">높은 정확성</string>
+  <string name="quick_settings_location_detail_mode_battery_saving_title">배터리 절약</string>
+  <string name="quick_settings_location_detail_mode_sensors_only_title">기기 전용</string>
+  <string name="quick_settings_location_detail_mode_high_accuracy_description">Wi\u2011Fi 및 셀룰러 네트워크를 사용하여 위치 결정</string>
+  <string name="quick_settings_location_detail_mode_battery_saving_description">Wi\u2011Fi 및 셀룰러 네트워크를 사용하여 위치 결정</string>
+  <string name="quick_settings_location_detail_mode_sensors_only_description">GPS를 사용하여 위치 결정</string>
+  <string name="heads_up_snooze_message">헤드업을 <xliff:g id="number">%d</xliff:g> 분 동안 사용할 수 없습니다.</string>
 </resources>

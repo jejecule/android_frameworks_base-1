@@ -36,4 +36,5 @@
   <string name="quick_settings_location_detail_mode_high_accuracy_description">使用GPS，WiFi和蜂窝网络来确定位置 </string>
   <string name="quick_settings_location_detail_mode_battery_saving_description">使用WiFi和蜂窝网络来确定位置</string>
   <string name="quick_settings_location_detail_mode_sensors_only_description">使用GPS来确定你的位置</string>
+  <string name="heads_up_snooze_message">浮动通知禁用 <xliff:g id="number">%d</xliff:g> 分钟。</string>
 </resources>

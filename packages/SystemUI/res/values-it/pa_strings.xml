@@ -36,4 +36,5 @@
   <string name="quick_settings_location_detail_mode_high_accuracy_description">Utilizza GPS, WiFi e rete cellulare per determinare la posizione </string>
   <string name="quick_settings_location_detail_mode_battery_saving_description">Usa WiFi e rete cellulare per determinare la posizione</string>
   <string name="quick_settings_location_detail_mode_sensors_only_description">Usa GPS per determinare la posizione</string>
+  <string name="heads_up_snooze_message">Heads up disabilitato per <xliff:g id="number">%d</xliff:g> minuti.</string>
 </resources>
