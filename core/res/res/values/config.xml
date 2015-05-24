@@ -2377,10 +2377,4 @@
 
     <!-- Boolean to enable stk functionality on Samsung phones -->
     <bool name="config_samsung_stk">false</bool>
-
-    <!-- Dummies to use an entire CM Device Tree -->
-    <integer name="config_deviceHardwareWakeKeys"></integer>
-    <string name="config_perf_profile_prop" translatable="false"></string>
-    <string name="config_perf_profile_default_entry" translatable="false"></string>
-
 </resources>
