@@ -18,19 +18,19 @@
  */
  -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-  <string name="delete">Delete</string>
+  <string name="delete">Odstrániť</string>
   <string name="screenshot_delete_confirmation">Snímka obrazovky bola odstránena</string>
-  <string name="interruption_level_silent">Silent</string>
-  <string name="zen_silent_with_warning">No interruptions, except alarms.</string>
+  <string name="interruption_level_silent">Tichý</string>
+  <string name="zen_silent_with_warning">Bez vyrušenia, okrem budíka.</string>
   <string name="accessibility_quick_settings_location_battery_saving">Location reporting: battery saving mode.</string>
   <string name="accessibility_quick_settings_location_gps_only">Location reporting: sensors only mode.</string>
   <string name="accessibility_quick_settings_location_high_accuracy">Location reporting: high accuracy mode.</string>
-  <string name="quick_settings_location_battery_saving_label">Battery saving</string>
-  <string name="quick_settings_location_gps_only_label">GPS only</string>
-  <string name="quick_settings_location_high_accuracy_label">High accuracy</string>
-  <string name="quick_settings_location_detail_title">Location</string>
-  <string name="quick_settings_location_detail_menu_title">Select mode:</string>
-  <string name="quick_settings_location_detail_mode_high_accuracy_title">High accuracy</string>
+  <string name="quick_settings_location_battery_saving_label">Šetrenie batérie</string>
+  <string name="quick_settings_location_gps_only_label">Len GPS</string>
+  <string name="quick_settings_location_high_accuracy_label">Vysoká presnosť</string>
+  <string name="quick_settings_location_detail_title">Poloha</string>
+  <string name="quick_settings_location_detail_menu_title">Vyberte režim:</string>
+  <string name="quick_settings_location_detail_mode_high_accuracy_title">Vysoká presnosť</string>
   <string name="quick_settings_location_detail_mode_battery_saving_title">Battery saving</string>
   <string name="quick_settings_location_detail_mode_sensors_only_title">Device only</string>
   <string name="quick_settings_location_detail_mode_high_accuracy_description">Use GPS, Wi\u2011Fi, and cellular networks to determine location </string>

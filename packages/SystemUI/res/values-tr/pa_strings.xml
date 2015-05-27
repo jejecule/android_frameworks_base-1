@@ -36,5 +36,5 @@
   <string name="quick_settings_location_detail_mode_high_accuracy_description">Konumu belirlemek için GPS,Kablosuz ve hücresel ağları kullanın </string>
   <string name="quick_settings_location_detail_mode_battery_saving_description">Konumu belirlemek için Kablosuz ve hücresel ağları kullanın</string>
   <string name="quick_settings_location_detail_mode_sensors_only_description">Konumunuzu belirlemek için GPS kullanın</string>
-  <string name="heads_up_snooze_message">Heads up is disabled for <xliff:g id="number">%d</xliff:g> minutes.</string>
+  <string name="heads_up_snooze_message">Heads up bildirimleri <xliff:g id="number">%d</xliff:g> dakikalığına devre dışı.</string>
 </resources>

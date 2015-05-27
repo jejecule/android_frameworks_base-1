@@ -21,7 +21,7 @@
   <string name="delete">Excluir</string>
   <string name="screenshot_delete_confirmation">Captura de tela excluída</string>
   <string name="interruption_level_silent">Silencioso</string>
-  <string name="zen_silent_with_warning">Sem interrupções, excepto alarmes.</string>
+  <string name="zen_silent_with_warning">Sem interrupções, exceto alarmes.</string>
   <string name="accessibility_quick_settings_location_battery_saving">Localização: modo de economia de bateria.</string>
   <string name="accessibility_quick_settings_location_gps_only">Localização: somente sensores.</string>
   <string name="accessibility_quick_settings_location_high_accuracy">Localização: modo de alta precisão.</string>
@@ -36,5 +36,5 @@
   <string name="quick_settings_location_detail_mode_high_accuracy_description">Utiliza o GPS, o sinal Wi-Fi e as redes móveis para determinar a localização </string>
   <string name="quick_settings_location_detail_mode_battery_saving_description">Utiliza o sinal Wi-Fi e redes móveis para determinar a localização</string>
   <string name="quick_settings_location_detail_mode_sensors_only_description">Utiliza somente o GPS para determinar sua localização</string>
-  <string name="heads_up_snooze_message">Heads up is disabled for <xliff:g id="number">%d</xliff:g> minutes.</string>
+  <string name="heads_up_snooze_message">Notificações Heads up desabilitadas por <xliff:g id="number">%d</xliff:g> minutos.</string>
 </resources>
