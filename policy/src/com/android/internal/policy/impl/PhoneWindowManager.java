@@ -2034,6 +2034,8 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                         != PackageManager.PERMISSION_GRANTED;
     }
 
+    private boolean mStatusBarLayoutAsKeyguard;
+
     @Override
     public void adjustWindowParamsLw(WindowManager.LayoutParams attrs) {
         switch (attrs.type) {
@@ -2045,7 +2047,9 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                 attrs.flags &= ~WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH;
                 break;
             case TYPE_STATUS_BAR:
-
+                mStatusBarLayoutAsKeyguard = (attrs.privateFlags & PRIVATE_FLAG_KEYGUARD) != 0
+                        && attrs.height == WindowManager.LayoutParams.MATCH_PARENT
+                        && (attrs.flags & (FLAG_NOT_FOCUSABLE|FLAG_ALT_FOCUSABLE_IM)) == 0;
                 // If the Keyguard is in a hidden state (occluded by another window), we force to
                 // remove the wallpaper and keyguard flag so that any change in-flight after setting
                 // the keyguard as occluded wouldn't set these flags again.
@@ -3957,8 +3961,8 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     public void layoutWindowLw(WindowState win, WindowState attached) {
         // we've already done the status bar
         final WindowManager.LayoutParams attrs = win.getAttrs();
-        if ((win == mStatusBar && (attrs.privateFlags & PRIVATE_FLAG_KEYGUARD) == 0) ||
-                win == mNavigationBar) {
+        if ((win == mStatusBar && (attrs.privateFlags & PRIVATE_FLAG_KEYGUARD) == 0
+                && !mStatusBarLayoutAsKeyguard) || win == mNavigationBar) {
             return;
         }
         final boolean isDefaultDisplay = win.isDefaultDisplay();
@@ -4018,13 +4022,14 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             // IM dock windows always go to the bottom of the screen.
             attrs.gravity = Gravity.BOTTOM;
             mDockLayer = win.getSurfaceLayer();
-        } else if (win == mStatusBar && (attrs.privateFlags & PRIVATE_FLAG_KEYGUARD) != 0) {
+        } else if (win == mStatusBar && (attrs.privateFlags & PRIVATE_FLAG_KEYGUARD) != 0
+                || mStatusBarLayoutAsKeyguard) {
             pf.left = df.left = of.left = mUnrestrictedScreenLeft;
             pf.top = df.top = of.top = mUnrestrictedScreenTop;
             pf.right = df.right = of.right = mUnrestrictedScreenWidth + mUnrestrictedScreenLeft;
             pf.bottom = df.bottom = of.bottom = mUnrestrictedScreenHeight + mUnrestrictedScreenTop;
             cf.left = vf.left = mStableLeft;
-            cf.top = vf.top = mStableTop;
+            cf.top = vf.top = (attrs.privateFlags & PRIVATE_FLAG_KEYGUARD) != 0 ? mStableTop : mUnrestrictedScreenTop;
             cf.right = vf.right = mStableRight;
             vf.bottom = mStableBottom;
             cf.bottom = mContentBottom;
