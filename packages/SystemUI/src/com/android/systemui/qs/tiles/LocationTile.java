@@ -90,11 +90,7 @@ public class LocationTile extends QSTile<QSTile.BooleanState> {
 
     @Override
     protected void handleClick() {
-        if(mController.isAdvancedSettingsEnabled()) {
-            showDetail(true);
-        } else {
-            mController.setLocationEnabled(!mController.isLocationEnabled());
-        }
+        showDetail(true);
         mEnable.setAllowAnimation(true);
         mDisable.setAllowAnimation(true);
     }
