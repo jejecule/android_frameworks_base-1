@@ -17,6 +17,8 @@
 
 package com.android.systemui.statusbar.phone;
 
+import static android.provider.Settings.Secure.QS_TILES;
+
 import android.app.ActivityManager;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -63,7 +65,7 @@ import com.android.systemui.statusbar.policy.UserInfoController;
 /**
  * The view to manage the header area in the expanded status bar.
  */
-public class StatusBarHeaderView extends RelativeLayout implements View.OnClickListener,
+public class StatusBarHeaderView extends RelativeLayout implements View.OnClickListener, View.OnLongClickListener,
         BatteryController.BatteryStateChangeCallback, NextAlarmController.NextAlarmChangeCallback {
 
     private boolean mExpanded;
@@ -159,6 +161,7 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
         mDateExpanded = (TextView) findViewById(R.id.date_expanded);
         mSettingsButton = findViewById(R.id.settings_button);
         mSettingsButton.setOnClickListener(this);
+        mSettingsButton.setOnLongClickListener(this);
         if (getResources().getBoolean(R.bool.config_showTaskManagerSwitcher)) {
             mTaskManagerButton = findViewById(R.id.task_manager_button);
         }
@@ -537,6 +540,15 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
         } else if (v == mDateGroup) {
             startDateActivity();
         }
+    }
+
+    @Override
+    public boolean onLongClick(View v) {
+        if (v == mSettingsButton) {
+            Settings.Secure.putString(mContext.getContentResolver(), QS_TILES, "default");
+            return true;
+        }
+        return false;
     }
 
     private void startSettingsActivity() {
