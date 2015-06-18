@@ -39,7 +39,7 @@ public final class AidGroup implements Parcelable {
      * @param aids The list of AIDs present in the group
      * @param category The category of this group, e.g. {@link CardEmulation#CATEGORY_PAYMENT}
      */
-    public AidGroup(List<String> aids, String category) {
+    public AidGroup(List<String> aids, String category, String description) {
         if (aids == null || aids.size() == 0) {
             throw new IllegalArgumentException("No AIDS in AID group.");
         }
@@ -60,7 +60,11 @@ public final class AidGroup implements Parcelable {
         for (String aid : aids) {
             this.aids.add(aid.toUpperCase());
         }
-        this.description = null;
+        this.description = description;
+    }
+
+    public AidGroup(List<String> aids, String category) {
+        this(aids, category, null);
     }
 
     AidGroup(String category, String description) {
@@ -74,6 +78,10 @@ public final class AidGroup implements Parcelable {
      */
     public String getCategory() {
         return category;
+    }
+
+    public String getDescription() {
+        return description;
     }
 
     /**
@@ -102,6 +110,13 @@ public final class AidGroup implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(category);
+        if (description != null) {
+            dest.writeInt(1);
+            dest.writeString(description);
+        }
+        else {
+            dest.writeInt(0);
+        }
         dest.writeInt(aids.size());
         if (aids.size() > 0) {
             dest.writeStringList(aids);
@@ -114,12 +129,19 @@ public final class AidGroup implements Parcelable {
         @Override
         public AidGroup createFromParcel(Parcel source) {
             String category = source.readString();
+            String description;
+            if (source.readInt() == 1) {
+                description = source.readString();
+            }
+            else {
+                description = null;
+            }
             int listSize = source.readInt();
             ArrayList<String> aidList = new ArrayList<String>();
             if (listSize > 0) {
                 source.readStringList(aidList);
             }
-            return new AidGroup(aidList, category);
+            return new AidGroup(aidList, category, description);
         }
 
         @Override
@@ -130,6 +152,7 @@ public final class AidGroup implements Parcelable {
 
     static public AidGroup createFromXml(XmlPullParser parser) throws XmlPullParserException, IOException {
         String category = null;
+        String description = null;
         ArrayList<String> aids = new ArrayList<String>();
         AidGroup group = null;
         boolean inGroup = false;
@@ -154,13 +177,17 @@ public final class AidGroup implements Parcelable {
                         Log.e(TAG, "<aid-group> tag without valid category");
                         return null;
                     }
+                    description = parser.getAttributeValue(null, "description");
+                    if (description == null) {
+                        Log.e(TAG, "Ignoring <aid-group> tag without valid description");
+                    }
                     inGroup = true;
                 } else {
                     Log.d(TAG, "Ignoring unexpected tag: " + tagName);
                 }
             } else if (eventType == XmlPullParser.END_TAG) {
                 if (tagName.equals("aid-group") && inGroup && aids.size() > 0) {
-                    group = new AidGroup(aids, category);
+                    group = new AidGroup(aids, category, description);
                     break;
                 }
             }
@@ -172,6 +199,9 @@ public final class AidGroup implements Parcelable {
     public void writeAsXml(XmlSerializer out) throws IOException {
         out.startTag(null, "aid-group");
         out.attribute(null, "category", category);
+        if (description != null) {
+            out.attribute(null, "description", description);
+        }
         for (String aid : aids) {
             out.startTag(null, "aid");
             out.attribute(null, "value", aid);
