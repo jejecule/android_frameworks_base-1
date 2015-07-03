@@ -1053,12 +1053,16 @@ public abstract class Layout {
      * closest to the specified horizontal position.
      */
     public int getOffsetForHorizontal(int line, float horiz) {
-        int max = getLineEnd(line) - 1;
+        int max = getLineEnd(line);
         int min = getLineStart(line);
         Directions dirs = getLineDirections(line);
 
-        if (line == getLineCount() - 1)
-            max++;
+        // If this is not the last line, find the valid cursor position before the last character
+        // before the last character of the line. This prevents the cursor from being positioned
+        // after the last character.
+        if (line < getLineCount() - 1)
+            max = mPaint.getTextRunCursor(mText, min, max,
+                    dirs.mDirections[dirs.mDirections.length-1], max, Paint.CURSOR_BEFORE);
 
         int best = min;
         float bestdist = Math.abs(getPrimaryHorizontal(best) - horiz);
