@@ -42,7 +42,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class PAWorldActivity extends Activity {
+public class MerkPlatLogo extends Activity {
     FrameLayout mContent;
     int mCount;
     final Handler mHandler = new Handler();
@@ -69,7 +69,7 @@ public class PAWorldActivity extends Activity {
         lp.gravity = Gravity.CENTER;
 
         final ImageView logo = new ImageView(this);
-        logo.setImageResource(com.android.internal.R.drawable.pa_world_logo);
+        logo.setImageResource(com.android.internal.R.drawable.merk_plat_logo);
         logo.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
         logo.setVisibility(View.INVISIBLE);
 
@@ -80,10 +80,10 @@ public class PAWorldActivity extends Activity {
         final TextView letter = new TextView(this);
 
         letter.setTypeface(bold);
-        letter.setTextSize(200);
+        letter.setTextSize(120);
         letter.setTextColor(TEXT_COLOR);
         letter.setGravity(Gravity.CENTER);
-        letter.setText("PA");
+        letter.setText("MERK");
 
         final int p = (int)(4 * metrics.density);
 
@@ -94,9 +94,9 @@ public class PAWorldActivity extends Activity {
         tv.setTextColor(TEXT_COLOR);
         tv.setGravity(Gravity.CENTER);
         tv.setTransformationMethod(new AllCapsTransformationMethod(this));
-        String paVersion = SystemProperties.get("ro.pa.version");
-        paVersion = paVersion.replaceAll("([0-9\\.]+?)-.*", "$1");
-        tv.setText("Paranoid Android " + paVersion);
+        String merkVersion = SystemProperties.get("ro.merk.version");
+        merkVersion = merkVersion.replaceAll("([0-9\\.]+?)-.*", "$1");
+        tv.setText("MerkMod Version " + merkVersion);
         tv.setVisibility(View.INVISIBLE);
 
         mContent.addView(bg);
@@ -165,7 +165,7 @@ public class PAWorldActivity extends Activity {
                     getBaseContext().startActivityAsUser(intent,
                             new UserHandle(UserHandle.USER_CURRENT));
                 } catch (ActivityNotFoundException ex) {
-                    android.util.Log.e("PAWorldActivity", "Couldn't catch a break.");
+                    android.util.Log.e("MerkPlatLogo", "Couldn't catch a break.");
                 }
                 finish();
                 return true;

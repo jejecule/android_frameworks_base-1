@@ -3037,7 +3037,7 @@
                 android:configChanges="orientation|keyboardHidden"
                 android:process=":ui">
         </activity>
-        <activity android:name="com.android.internal.app.PAWorldActivity"
+        <activity android:name="com.android.internal.app.MerkPlatLogo"
                 android:theme="@style/Theme.Wallpaper.NoTitleBar.Fullscreen"
                 android:process=":ui">
         </activity>
