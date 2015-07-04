@@ -20,11 +20,15 @@ import android.app.StatusBarManager;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.database.ContentObserver;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.media.session.MediaSessionLegacyHelper;
 import android.net.Uri;
 import android.os.Handler;
@@ -34,6 +38,10 @@ import android.os.PowerManager;
 import android.os.RemoteException;
 import android.os.ServiceManager;
 import android.provider.Settings;
+import android.renderscript.Allocation;
+import android.renderscript.Element;
+import android.renderscript.RenderScript;
+import android.renderscript.ScriptIntrinsicBlur;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -49,6 +57,7 @@ import com.android.systemui.R;
 import com.android.systemui.statusbar.BaseStatusBar;
 import com.android.systemui.statusbar.DragDownHelper;
 import com.android.systemui.statusbar.StatusBarState;
+import com.android.systemui.statusbar.phone.CaptureAndBlur;
 import com.android.systemui.statusbar.stack.NotificationStackScrollLayout;
 
 
@@ -70,6 +79,12 @@ public class StatusBarWindowView extends FrameLayout {
     private GestureDetector mDoubleTapGesture;
     private Handler mHandler = new Handler();
     private SettingsObserver mSettingsObserver;
+
+	public Bitmap temp_bg;
+	public Bitmap bg;
+	public Bitmap temp_blur;
+
+    private View blur_bg;
 
     public StatusBarWindowView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -201,6 +216,19 @@ public class StatusBarWindowView extends FrameLayout {
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
         boolean intercept = false;
+		CaptureAndBlur CaB = new CaptureAndBlur();
+		CaB.capture();
+        CaB.createBlur(bg);
+        if (temp_bg != null){
+            bg = temp_bg;
+        }
+
+        Drawable blur_d = new BitmapDrawable(bg);
+        blur_bg = findViewById(R.id.blur_bg);
+        //blur_bg.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+        blur_bg.setBackground(blur_d);
+        blur_bg.setAlpha(0f);
+
         if (mDoubleTapToSleepEnabled
                 && ev.getY() < mStatusBarHeaderHeight) {
             if (DEBUG) Log.w(TAG, "logging double tap gesture");

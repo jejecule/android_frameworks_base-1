@@ -26,7 +26,11 @@
     android:layout_height="match_parent"
     android:background="@android:color/transparent"
     >
-
+    <FrameLayout
+        android:id="@+id/blur_bg"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/panel_blur">
     <include
         layout="@layout/carrier_label"
         android:layout_height="@dimen/carrier_label_height"
@@ -125,5 +129,5 @@
         android:layout_gravity="bottom"
         android:visibility="invisible"
         android:background="@drawable/qs_navbar_scrim" />
-
+    </FrameLayout>
 </com.android.systemui.statusbar.phone.NotificationPanelView><!-- end of sliding panel -->
