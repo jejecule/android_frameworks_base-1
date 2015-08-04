@@ -71,6 +71,7 @@ public class SettingsProvider extends ContentProvider {
     private static final String TABLE_GLOBAL = "global";
     private static final String TABLE_FAVORITES = "favorites";
     private static final String TABLE_OLD_FAVORITES = "old_favorites";
+    private static final String TABLE_METALLIUM = "metallium";
 
     private static final String[] COLUMN_VALUE = new String[] { "value" };
 
@@ -80,6 +81,8 @@ public class SettingsProvider extends ContentProvider {
     private static final SparseArray<SettingsCache> sSystemCaches
             = new SparseArray<SettingsCache>();
     private static final SparseArray<SettingsCache> sSecureCaches
+            = new SparseArray<SettingsCache>();
+    private static final SparseArray<SettingsCache> sMETALLIUMCaches
             = new SparseArray<SettingsCache>();
     private static final SettingsCache sGlobalCache = new SettingsCache(TABLE_GLOBAL);
 
@@ -192,7 +195,7 @@ public class SettingsProvider extends ContentProvider {
                     throw new IllegalArgumentException("Bad root path: " + this.table);
                 }
                 if (TABLE_SYSTEM.equals(this.table) || TABLE_SECURE.equals(this.table) ||
-                    TABLE_GLOBAL.equals(this.table)) {
+                    TABLE_GLOBAL.equals(this.table) || TABLE_METALLIUM.equals(this.table)) {
                     this.where = Settings.NameValueTable.NAME + "=?";
                     final String name = url.getPathSegments().get(1);
                     this.args = new String[] { name };
@@ -239,7 +242,8 @@ public class SettingsProvider extends ContentProvider {
         String table = tableUri.getPathSegments().get(0);
         if (TABLE_SYSTEM.equals(table) ||
                 TABLE_SECURE.equals(table) ||
-                TABLE_GLOBAL.equals(table)) {
+                TABLE_GLOBAL.equals(table) ||
+                TABLE_METALLIUM.equals(table)) {
             String name = values.getAsString(Settings.NameValueTable.NAME);
             return Uri.withAppendedPath(tableUri, name);
         } else {
@@ -268,8 +272,11 @@ public class SettingsProvider extends ContentProvider {
         } else if (table.equals(TABLE_SECURE)) {
             property = Settings.Secure.SYS_PROP_SETTING_VERSION;
             backedUpDataChanged = true;
+        } else if (table.equals(TABLE_METALLIUM)) {
+            property = Settings.METALLIUM.SYS_PROP_SETTING_VERSION;
+            backedUpDataChanged = true;
         } else if (isGlobal) {
-            property = Settings.Global.SYS_PROP_SETTING_VERSION;    // this one is global
+            property = Settings.Global.SYS_PROP_SETTING_VERSION;    // this one is global 
             backedUpDataChanged = true;
         }
 
@@ -411,6 +418,7 @@ public class SettingsProvider extends ContentProvider {
             mOpenHelpers.delete(userHandle);
             sSystemCaches.delete(userHandle);
             sSecureCaches.delete(userHandle);
+            sMETALLIUMCaches.delete(userHandle);
             sKnownMutationsInFlight.delete(userHandle);
             onProfilesChanged();
         }
@@ -446,16 +454,17 @@ public class SettingsProvider extends ContentProvider {
             Slog.i(TAG, "Installing settings db helper and caches for user " + userHandle);
         }
 
-        DatabaseHelper dbhelper;
+        DatabaseHelper dbHelper;
 
         synchronized (this) {
-            dbhelper = mOpenHelpers.get(userHandle);
-            if (dbhelper == null) {
-                dbhelper = new DatabaseHelper(getContext(), userHandle);
-                mOpenHelpers.append(userHandle, dbhelper);
+            dbHelper = mOpenHelpers.get(userHandle);
+            if (dbHelper == null) {
+                dbHelper = new DatabaseHelper(getContext(), userHandle);
+                mOpenHelpers.append(userHandle, dbHelper);
 
                 sSystemCaches.append(userHandle, new SettingsCache(TABLE_SYSTEM));
                 sSecureCaches.append(userHandle, new SettingsCache(TABLE_SECURE));
+                sMETALLIUMCaches.append(userHandle, new SettingsCache(TABLE_METALLIUM));
                 sKnownMutationsInFlight.append(userHandle, new AtomicInteger(0));
             }
         }
@@ -465,7 +474,7 @@ public class SettingsProvider extends ContentProvider {
         // written by the first, but that's benign: the SQLite helper implementation
         // manages concurrency itself, and it's important that we not run the db
         // initialization with any of our own locks held, so we're fine.
-        SQLiteDatabase db = dbhelper.getWritableDatabase();
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
 
         // Watch for external modifications to the database files,
         // keeping our caches in sync.  We synchronize the observer set
@@ -517,6 +526,7 @@ public class SettingsProvider extends ContentProvider {
         }
         fullyPopulateCache(dbHelper, TABLE_SECURE, sSecureCaches.get(userHandle));
         fullyPopulateCache(dbHelper, TABLE_SYSTEM, sSystemCaches.get(userHandle));
+        fullyPopulateCache(dbHelper, TABLE_METALLIUM, sMETALLIUMCaches.get(userHandle));
     }
 
     // Slurp all values (if sane in number & size) into cache.
@@ -638,6 +648,9 @@ public class SettingsProvider extends ContentProvider {
         if (TABLE_SECURE.equals(tableName)) {
             return getOrConstructCache(callingUser, sSecureCaches);
         }
+        if (TABLE_METALLIUM.equals(tableName)) {
+            return getOrConstructCache(callingUser, sMETALLIUMCaches);
+        }
         if (TABLE_GLOBAL.equals(tableName)) {
             return sGlobalCache;
         }
@@ -735,6 +748,13 @@ public class SettingsProvider extends ContentProvider {
                     sGlobalCache, request);
         }
 
+        if (Settings.CALL_METHOD_GET_METALLIUM.equals(method)) {
+            if (LOCAL_LOGV) Slog.v(TAG, "call(aokp:" + request + ") for " + callingUser);
+            dbHelper = getOrEstablishDatabase(callingUser);
+            cache = sMETALLIUMCaches.get(callingUser);
+            return lookupValue(dbHelper, TABLE_METALLIUM, cache, request);
+        }
+
         // Put methods - new value is in the args bundle under the key named by
         // the Settings.NameValueTable.VALUE static.
         final String newValue = (args == null)
@@ -829,6 +849,9 @@ public class SettingsProvider extends ContentProvider {
                         + callingUser);
             }
             insertForUser(Settings.Global.CONTENT_URI, values, callingUser);
+        } else if (Settings.CALL_METHOD_PUT_METALLIUM.equals(method)) {
+            if (LOCAL_LOGV) Slog.v(TAG, "call_put(metallium:" +request + "=" + newValue + ") for" + callingUser);
+            insertForUser(Settings.METALLIUM.CONTENT_URI, values, callingUser);
         } else {
             Slog.w(TAG, "call() with invalid method: " + method);
         }
