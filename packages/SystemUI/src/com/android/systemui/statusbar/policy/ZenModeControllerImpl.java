@@ -151,6 +151,20 @@ public class ZenModeControllerImpl implements ZenModeController {
         return info != null ? info.getTriggerTime() : 0;
     }
 
+     @Override
+    public boolean isAllowAlarms() {
+        try {
+            final ZenModeConfig config = mNoMan.getZenModeConfig();
+            if (config != null) {
+                return config.allowAlarms;
+            }
+        } catch (RemoteException e) {
+            // noop
+        }
+        return true;
+    }
+
+
     @Override
     public void setUserId(int userId) {
         mUserId = userId;
