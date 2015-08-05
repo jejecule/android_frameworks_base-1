@@ -55,6 +55,11 @@
   <java-symbol type="string" name="setting_confirmation_yes" />
   <java-symbol type="string" name="setting_confirmation_no" />
 
+  <!-- Safe headset volume warning dialog -->
+  <java-symbol type="string" name="safe_headset_warning_title" />
+  <java-symbol type="string" name="safe_headset_warning_message" />
+  <java-symbol type="drawable" name="safe_headset_volume" />
+
   <!-- First boot install dialog -->
   <java-symbol type="string" name="android_installing_apk" />
   <java-symbol type="string" name="android_installing_title" />
