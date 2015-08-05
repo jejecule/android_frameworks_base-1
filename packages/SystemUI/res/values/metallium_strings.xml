@@ -59,6 +59,9 @@
     <!-- [CHAR LIMIT=130] Location detail panel, description for sensors only mode -->
     <string name="quick_settings_location_detail_mode_sensors_only_description">Use GPS to determine your location</string>
 
+    <!-- Quick pulldown confirmation dialog -->
+    <string name="quick_settings_quick_pull_down_title">Quick Pull down</string>
+    <string name="quick_settings_quick_pull_down_message">Would you like the edge of the status bar to pull down quick settings?</string>
     <!-- Heads up -->
     <string name="heads_up_snooze_message">Heads up is disabled for <xliff:g id="number">%d</xliff:g> minutes.</string>
 
