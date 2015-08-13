@@ -3174,13 +3174,6 @@ public final class Settings {
         /** @hide */ public static final int HEADS_UP_TICKER_ON = 1;
 
         /**
-         * Defines the global heads up notification snooze
-         *
-         * @hide
-         */
-        public static final String HEADS_UP_NOTIFICATION_SNOOZE = "heads_up_notification_snooze";
-
-        /**
          * Status bar battery %
          * 0: Hide the battery percentage
          * 1: Display the battery percentage inside the icon
@@ -3199,14 +3192,6 @@ public final class Settings {
          * @hide
          */
         public static final String STATUS_BAR_BATTERY_STYLE = "status_bar_battery_style";
-
-        /**
-         * Visibility of SIM icons of unpopulated SIM slots in MSIM mode
-         * 0: Hide unpopulated SIM icons
-         * 1: Show unpopulated SIM icons
-         * @hide
-         */
-        public static final String STATUS_BAR_MSIM_SHOW_EMPTY_ICONS = "status_bar_show_empty_sims";
 
         /**
          * Locale for secondary overlay on dialer for t9 search input
@@ -5603,7 +5588,6 @@ public final class Settings {
          * might be 19. ThemeService would then change the value to 21. This is useful
          * when an API change breaks a theme. Themeservice can identify old themes and
          * unapply them from the system.
-         * @hide
          */
         public static final String THEME_PREV_BOOT_API_LEVEL = "theme_prev_boot_api_level";
 

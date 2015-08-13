@@ -46,7 +46,6 @@ import java.util.List;
  *    ...
  *  </family>
  *</familyset>
- * @hide
  */
 public class LegacyFontListParser {
     public static class Family {

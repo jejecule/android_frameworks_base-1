@@ -243,25 +243,6 @@ public class ThemesContract {
          * <P>Default: 0</P>
          */
         public static final String TARGET_API = "target_api";
-
-        /**
-         * The install state of the theme.
-         * Can be one of the following:
-         * {@link InstallState#UNKNOWN}
-         * {@link InstallState#INSTALLING}
-         * {@link InstallState#UPDATING}
-         * {@link InstallState#INSTALLED}
-         * <P>Type: INTEGER</P>
-         * <P>Default: 0</P>
-         */
-        public static final String INSTALL_STATE = "install_state";
-
-        public static class InstallState {
-            public static final int UNKNOWN = 0;
-            public static final int INSTALLING = 1;
-            public static final int UPDATING = 2;
-            public static final int INSTALLED = 3;
-        }
     }
 
     /**
@@ -282,25 +263,6 @@ public class ThemesContract {
          * <P>Type: String</P>
          */
         public static final String COL_VALUE = "value";
-
-        /**
-         * The package name that corresponds to where this component was applied from previously
-         * <P>Type: String</P>
-         */
-        public static final String COL_PREV_VALUE = "previous_value";
-
-        /**
-         * Time when this entry was last updated
-         * <P>Type: INTEGER</P>
-         */
-        public static final String COL_UPDATE_TIME = "update_time";
-
-        /*
-         * The unique ID for the component within a theme.
-         * Always 0 unless multiples of a component exist.
-         * <P>Type: INTEGER (long)</P>
-         */
-        public static final String COL_COMPONENT_ID = "component_id";
 
         /**
          * Valid keys
@@ -474,7 +436,7 @@ public class ThemesContract {
         public static final String COMPONENT_ID = "component_id";
 
         /**
-         * The unique key for a row. See the Valid key constants section below
+         * The unique key for a row. See the KEY_* constants
          * for valid examples
          * <P>Type: TEXT</P>
          */
@@ -489,54 +451,106 @@ public class ThemesContract {
         /**
          * Valid keys
          */
+        public static final String KEY_STATUSBAR_BACKGROUND = "statusbar_background";
+        public static final String KEY_STATUSBAR_BLUETOOTH_ICON = "statusbar_bluetooth_icon";
+        public static final String KEY_STATUSBAR_WIFI_ICON = "statusbar_wifi_icon";
+        public static final String KEY_STATUSBAR_SIGNAL_ICON = "statusbar_signal_icon";
+        public static final String KEY_STATUSBAR_BATTERY_PORTRAIT = "statusbar_battery_portrait";
+        public static final String KEY_STATUSBAR_BATTERY_LANDSCAPE = "statusbar_battery_landscape";
+        public static final String KEY_STATUSBAR_BATTERY_CIRCLE = "statusbar_battery_circle";
+        public static final String KEY_STATUSBAR_CLOCK_TEXT_COLOR = "statusbar_clock_text_color";
+        public static final String KEY_STATUSBAR_WIFI_COMBO_MARGIN_END =
+                "statusbar_wifi_combo_margin_end";
+        public static final String KEY_NAVBAR_BACKGROUND = "navbar_background";
+        public static final String KEY_NAVBAR_BACK_BUTTON = "navbar_back_button";
+        public static final String KEY_NAVBAR_HOME_BUTTON = "navbar_home_button";
+        public static final String KEY_NAVBAR_RECENT_BUTTON = "navbar_recent_button";
+        public static final String KEY_ICON_PREVIEW_1 = "icon_preview_1";
+        public static final String KEY_ICON_PREVIEW_2 = "icon_preview_2";
+        public static final String KEY_ICON_PREVIEW_3 = "icon_preview_3";
+        // KEY_WALLPAPER_FULL - path to the full-sized image in the theme assets directory
+        public static final String KEY_WALLPAPER_FULL = "wallpaper_full";
+        // KEY_WALLPAPER_PREVIEW - scaled and cropped version of the full size wallpaper
+        public static final String KEY_WALLPAPER_PREVIEW = "wallpaper_preview";
+        // KEY_WALLPAPER_THUMBNAIL - scaled version of the preview size wallpaper
+        public static final String KEY_WALLPAPER_THUMBNAIL = "wallpaper_thumbnail";
+        // KEY_LOCK_WALLPAPER_PREVIEW - scaled and cropped version of the full size wallpaper
+        public static final String KEY_LOCK_WALLPAPER_PREVIEW = "lock_wallpaper_preview";
+        // KEY_LOCK_WALLPAPER_THUMBNAIL - scaled version of the preview size wallpaper
+        public static final String KEY_LOCK_WALLPAPER_THUMBNAIL = "lock_wallpaper_thumbnail";
+        public static final String KEY_STYLE_PREVIEW = "style_preview";
+        public static final String KEY_STYLE_THUMBNAIL = "style_thumbnail";
+        public static final String KEY_BOOTANIMATION_THUMBNAIL = "bootanimation_thumbnail";
+    }
+
+    /**
+     * The following is being depricated in version 15. Only present for build compatibility.
+     * Table containing cached preview blobs for a given theme
+     */
+    public static class LegacyPreviewColumns {
+        public static final Uri CONTENT_URI = Uri.withAppendedPath(AUTHORITY_URI, "previews");
+
+        /**
+         * Uri for retrieving the previews for the currently applied components.
+         * Querying the themes provider using this URI will return a cursor with a single row
+         * containing all the previews for the components that are currently applied.
+         */
+        public static final Uri APPLIED_URI = Uri.withAppendedPath(AUTHORITY_URI,
+                "applied_previews");
+
+        /**
+         * The unique ID for a row.
+         * <P>Type: INTEGER (long)</P>
+         */
+        public static final String _ID = "_id";
+
+        /**
+         * The unique ID for the theme these previews belong to.
+         * <P>Type: INTEGER (long)</P>
+         */
+        public static final String THEME_ID = "theme_id";
 
         /**
          * Cached image of the themed status bar background.
-         * <P>Type: String (file path)</P>
+         * <P>Type: BLOB (bitmap)</P>
          */
         public static final String STATUSBAR_BACKGROUND = "statusbar_background";
 
         /**
          * Cached image of the themed bluetooth status icon.
-         * <P>Type: String (file path)</P>
+         * <P>Type: BLOB (bitmap)</P>
          */
         public static final String STATUSBAR_BLUETOOTH_ICON = "statusbar_bluetooth_icon";
 
         /**
          * Cached image of the themed wifi status icon.
-         * <P>Type: String (file path)</P>
+         * <P>Type: BLOB (bitmap)</P>
          */
         public static final String STATUSBAR_WIFI_ICON = "statusbar_wifi_icon";
 
         /**
          * Cached image of the themed cellular signal status icon.
-         * <P>Type: String (file path)</P>
+         * <P>Type: BLOB (bitmap)</P>
          */
         public static final String STATUSBAR_SIGNAL_ICON = "statusbar_signal_icon";
 
         /**
          * Cached image of the themed battery using portrait style.
-         * <P>Type: String (file path)</P>
+         * <P>Type: BLOB (bitmap)</P>
          */
         public static final String STATUSBAR_BATTERY_PORTRAIT = "statusbar_battery_portrait";
 
         /**
          * Cached image of the themed battery using landscape style.
-         * <P>Type: String (file path)</P>
+         * <P>Type: BLOB (bitmap)</P>
          */
         public static final String STATUSBAR_BATTERY_LANDSCAPE = "statusbar_battery_landscape";
 
         /**
          * Cached image of the themed battery using circle style.
-         * <P>Type: String (file path)</P>
+         * <P>Type: BLOB (bitmap)</P>
          */
         public static final String STATUSBAR_BATTERY_CIRCLE = "statusbar_battery_circle";
-
-        /**
-         * The themed color used for clock text in the status bar.
-         * <P>Type: INTEGER (int)</P>
-         */
-        public static final String STATUSBAR_CLOCK_TEXT_COLOR = "statusbar_clock_text_color";
 
         /**
          * The themed margin value between the wifi and rssi signal icons.
@@ -545,157 +559,101 @@ public class ThemesContract {
         public static final String STATUSBAR_WIFI_COMBO_MARGIN_END = "wifi_combo_margin_end";
 
         /**
+         * The themed color used for clock text in the status bar.
+         * <P>Type: INTEGER (int)</P>
+         */
+        public static final String STATUSBAR_CLOCK_TEXT_COLOR = "statusbar_clock_text_color";
+
+        /**
          * Cached image of the themed navigation bar background.
-         * <P>Type: String (file path)</P>
+         * <P>Type: BLOB (bitmap)</P>
          */
         public static final String NAVBAR_BACKGROUND = "navbar_background";
 
         /**
          * Cached image of the themed back button.
-         * <P>Type: String (file path)</P>
+         * <P>Type: BLOB (bitmap)</P>
          */
         public static final String NAVBAR_BACK_BUTTON = "navbar_back_button";
 
         /**
          * Cached image of the themed home button.
-         * <P>Type: String (file path)</P>
+         * <P>Type: BLOB (bitmap)</P>
          */
         public static final String NAVBAR_HOME_BUTTON = "navbar_home_button";
 
         /**
          * Cached image of the themed recents button.
-         * <P>Type: String (file path)</P>
+         * <P>Type: BLOB (bitmap)</P>
          */
         public static final String NAVBAR_RECENT_BUTTON = "navbar_recent_button";
 
         /**
-         * Cached image of the 1/3 icons
-         * <P>Type: String (file path)</P>
+         * Cached image of the 1/4 icons
+         * <P>Type: BLOB (bitmap)</P>
          */
         public static final String ICON_PREVIEW_1 = "icon_preview_1";
 
         /**
-         * Cached image of the 2/3 icons
-         * <P>Type: String (file path)</P>
+         * Cached image of the 2/4 icons
+         * <P>Type: BLOB (bitmap)</P>
          */
         public static final String ICON_PREVIEW_2 = "icon_preview_2";
 
         /**
-         * Cached image of the 3/3 icons
-         * <P>Type: String (file path)</P>
+         * Cached image of the 3/4 icons
+         * <P>Type: BLOB (bitmap)</P>
          */
         public static final String ICON_PREVIEW_3 = "icon_preview_3";
 
         /**
-         * Full path to the theme's wallpaper asset.
-         * <P>Type: String (file path)</P>
+         * Cached image of the 4/4 icons
+         * <P>Type: BLOB (bitmap)</P>
          */
-        public static final String WALLPAPER_FULL = "wallpaper_full";
-
-        /**
-         * Cached preview of the theme's wallpaper which is larger than the thumbnail
-         * but smaller than the full sized wallpaper.
-         * <P>Type: String (file path)</P>
-         */
-        public static final String WALLPAPER_PREVIEW = "wallpaper_preview";
-
-        /**
-         * Cached thumbnail of the theme's wallpaper
-         * <P>Type: String (file path)</P>
-         */
-        public static final String WALLPAPER_THUMBNAIL = "wallpaper_thumbnail";
-
-        /**
-         * Cached preview of the theme's lockscreen  wallpaper which is larger than the thumbnail
-         * but smaller than the full sized lockscreen wallpaper.
-         * <P>Type: String (file path)</P>
-         */
-        public static final String LOCK_WALLPAPER_PREVIEW = "lock_wallpaper_preview";
-
-        /**
-         * Cached thumbnail of the theme's lockscreen wallpaper
-         * <P>Type: String (file path)</P>
-         */
-        public static final String LOCK_WALLPAPER_THUMBNAIL = "lock_wallpaper_thumbnail";
+        public static final String ICON_PREVIEW_4 = "icon_preview_4";
 
         /**
          * Cached preview of UI controls representing the theme's style
-         * <P>Type: String (file path)</P>
+         * <P>Type: BLOB (bitmap)</P>
          */
         public static final String STYLE_PREVIEW = "style_preview";
 
         /**
          * Cached thumbnail preview of UI controls representing the theme's style
-         * <P>Type: String (file path)</P>
+         * <P>Type: BLOB (bitmap)</P>
          */
         public static final String STYLE_THUMBNAIL = "style_thumbnail";
 
         /**
          * Cached thumbnail of the theme's boot animation
-         * <P>Type: String (file path)</P>
+         * <P>Type: BLOB (bitmap)</P>
          */
         public static final String BOOTANIMATION_THUMBNAIL = "bootanimation_thumbnail";
 
-        public static final String[] VALID_KEYS = {
-            STATUSBAR_BACKGROUND,
-            STATUSBAR_BLUETOOTH_ICON,
-            STATUSBAR_WIFI_ICON,
-            STATUSBAR_SIGNAL_ICON,
-            STATUSBAR_BATTERY_PORTRAIT,
-            STATUSBAR_BATTERY_LANDSCAPE,
-            STATUSBAR_BATTERY_CIRCLE,
-            STATUSBAR_CLOCK_TEXT_COLOR,
-            STATUSBAR_WIFI_COMBO_MARGIN_END,
-            NAVBAR_BACKGROUND,
-            NAVBAR_BACK_BUTTON,
-            NAVBAR_HOME_BUTTON,
-            NAVBAR_RECENT_BUTTON,
-            ICON_PREVIEW_1,
-            ICON_PREVIEW_2,
-            ICON_PREVIEW_3,
-            WALLPAPER_FULL,
-            WALLPAPER_PREVIEW,
-            WALLPAPER_THUMBNAIL,
-            LOCK_WALLPAPER_PREVIEW,
-            LOCK_WALLPAPER_THUMBNAIL,
-            STYLE_PREVIEW,
-            STYLE_THUMBNAIL,
-            BOOTANIMATION_THUMBNAIL,
-        };
-    }
-
-    public static class Intent {
         /**
-         * Action sent from the provider when a theme has been fully installed.  Fully installed
-         * means that the apk was installed by PackageManager and the theme resources were
-         * processed and cached by {@link com.android.server.ThemeService}
-         * Requires the {@link android.Manifest.permission#READ_THEMES} permission to receive
-         * this broadcast.
+         * Cached thumbnail of the theme's wallpaper
+         * <P>Type: BLOB (bitmap)</P>
          */
-        public static final String ACTION_THEME_INSTALLED =
-                "themescontract.intent.action.THEME_INSTALLED";
+        public static final String WALLPAPER_THUMBNAIL = "wallpaper_thumbnail";
 
         /**
-         * Action sent from the provider when a theme has been updated.
-         * Requires the {@link android.Manifest.permission#READ_THEMES} permission to receive
-         * this broadcast.
+         * Cached preview of the theme's wallpaper which is larger than the thumbnail
+         * but smaller than the full sized wallpaper.
+         * <P>Type: BLOB (bitmap)</P>
          */
-        public static final String ACTION_THEME_UPDATED =
-                "themescontract.intent.action.THEME_UPDATED";
+        public static final String WALLPAPER_PREVIEW = "wallpaper_preview";
 
         /**
-         * Action sent from the provider when a theme has been removed.
-         * Requires the {@link android.Manifest.permission#READ_THEMES} permission to receive
-         * this broadcast.
+         * Cached thumbnail of the theme's lockscreen wallpaper
+         * <P>Type: BLOB (bitmap)</P>
          */
-        public static final String ACTION_THEME_REMOVED =
-                "themescontract.intent.action.THEME_REMOVED";
+        public static final String LOCK_WALLPAPER_THUMBNAIL = "lock_wallpaper_thumbnail";
 
         /**
-         * Uri scheme used to broadcast the theme's package name when broadcasting
-         * {@link android.provider.ThemesContract.Intent#ACTION_THEME_INSTALLED} or
-         * {@link android.provider.ThemesContract.Intent#ACTION_THEME_REMOVED}
+         * Cached preview of the theme's lockscreen  wallpaper which is larger than the thumbnail
+         * but smaller than the full sized lockscreen wallpaper.
+         * <P>Type: BLOB (bitmap)</P>
          */
-        public static final String URI_SCHEME_PACKAGE = "package";
+        public static final String LOCK_WALLPAPER_PREVIEW = "lock_wallpaper_preview";
     }
 }

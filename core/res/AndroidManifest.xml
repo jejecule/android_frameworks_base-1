@@ -3183,10 +3183,10 @@
             </intent-filter>
         </receiver>
 
-        <receiver android:name="com.android.server.AppsFailureReceiver" >
+        <receiver android:name="com.android.server.AppsLaunchFailureReceiver" >
             <intent-filter>
-                <action android:name="com.tmobile.intent.action.APP_FAILURE" />
-                <action android:name="com.tmobile.intent.action.APP_FAILURE_RESET" />
+                <action android:name="com.tmobile.intent.action.APP_LAUNCH_FAILURE" />
+                <action android:name="com.tmobile.intent.action.APP_LAUNCH_FAILURE_RESET" />
                 <action android:name="android.intent.action.PACKAGE_ADDED" />
                 <action android:name="android.intent.action.PACKAGE_REMOVED" />
                 <action android:name="org.cyanogenmod.intent.action.THEME_CHANGED" />

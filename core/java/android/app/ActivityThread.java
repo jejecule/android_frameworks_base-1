@@ -1782,7 +1782,8 @@ public final class ActivityThread {
                 ref = mResourcePackages.get(aInfo.packageName);
             }
             LoadedApk packageInfo = ref != null ? ref.get() : null;
-            if (packageInfo == null) {
+            if (packageInfo == null || (packageInfo.mResources != null
+                    && !packageInfo.mResources.getAssets().isUpToDate())) {
                 if (localLOGV) Slog.v(TAG, (includeCode ? "Loading code package "
                         : "Loading resource-only package ") + aInfo.packageName
                         + " (in " + (mBoundApplication != null
@@ -1805,10 +1806,6 @@ public final class ActivityThread {
                     mResourcePackages.put(aInfo.packageName,
                             new WeakReference<LoadedApk>(packageInfo));
                 }
-            }
-            if (packageInfo.mResources != null
-                    && !packageInfo.mResources.getAssets().isUpToDate()) {
-                packageInfo.mResources = null;
             }
             return packageInfo;
         }
@@ -2351,6 +2348,13 @@ public final class ActivityThread {
 
         } catch (Exception e) {
             if (!mInstrumentation.onException(activity, e)) {
+                if (e instanceof InflateException) {
+                    Log.e(TAG, "Failed to inflate", e);
+                    sendAppLaunchFailureBroadcast(r);
+                } else if (e instanceof Resources.NotFoundException) {
+                    Log.e(TAG, "Failed to find resource", e);
+                    sendAppLaunchFailureBroadcast(r);
+                }
                 throw new RuntimeException(
                     "Unable to start activity " + component
                     + ": " + e.toString(), e);
@@ -2358,6 +2362,16 @@ public final class ActivityThread {
         }
 
         return activity;
+    }
+
+    private void sendAppLaunchFailureBroadcast(ActivityClientRecord r) {
+        String pkg = null;
+        if (r.packageInfo != null && !TextUtils.isEmpty(r.packageInfo.getPackageName())) {
+            pkg = r.packageInfo.getPackageName();
+        }
+        Intent intent = new Intent(Intent.ACTION_APP_LAUNCH_FAILURE,
+                (pkg != null)? Uri.fromParts("package", pkg, null) : null);
+        getSystemContext().sendBroadcast(intent);
     }
 
     private Context createBaseContextForActivity(ActivityClientRecord r,
@@ -4152,8 +4166,8 @@ public final class ActivityThread {
         if (configDiff != 0) {
             // Ask text layout engine to free its caches if there is a locale change
             boolean hasLocaleConfigChange = ((configDiff & ActivityInfo.CONFIG_LOCALE) != 0);
-            boolean hasFontConfigChange = ((configDiff & ActivityInfo.CONFIG_THEME_FONT) != 0);
-            if (hasLocaleConfigChange || hasFontConfigChange) {
+            boolean hasThemeConfigChange = ((configDiff & ActivityInfo.CONFIG_THEME_RESOURCE) != 0);
+            if (hasLocaleConfigChange || hasThemeConfigChange) {
                 Canvas.freeTextLayoutCaches();
                 Typeface.recreateDefaults();
                 if (DEBUG_CONFIGURATION) Slog.v(TAG, "Cleared TextLayout Caches");

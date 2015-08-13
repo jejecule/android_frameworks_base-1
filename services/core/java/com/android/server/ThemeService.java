@@ -37,15 +37,13 @@ import android.content.pm.ThemeUtils;
 import android.content.res.AssetManager;
 import android.content.res.Configuration;
 import android.content.res.IThemeProcessingListener;
-import android.content.res.ThemeChangeRequest;
 import android.content.res.ThemeConfig;
 import android.content.res.IThemeChangeListener;
 import android.content.res.IThemeService;
-import android.database.ContentObserver;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.RingtoneManager;
-import android.net.Uri;
 import android.os.Binder;
 import android.os.Environment;
 import android.os.FileUtils;
@@ -98,7 +96,7 @@ public class ThemeService extends IThemeService.Stub {
     private static final boolean DEBUG = false;
 
     private static final String GOOGLE_SETUPWIZARD_PACKAGE = "com.google.android.setupwizard";
-    private static final String CM_SETUPWIZARD_PACKAGE = "com.cyanogenmod.setupwizard";
+    private static final String CM_SETUPWIZARD_PACKAGE = "com.cyanogenmod.account";
 
     private static final long MAX_ICON_CACHE_SIZE = 33554432L; // 32MB
     private static final long PURGED_ICON_CACHE_SIZE = 25165824L; // 24 MB
@@ -114,7 +112,6 @@ public class ThemeService extends IThemeService.Stub {
     private int mProgress;
     private boolean mWallpaperChangedByUs = false;
     private long mIconCacheSize = 0L;
-    private int mCurrentUserId = UserHandle.USER_OWNER;
 
     private boolean mIsThemeApplying = false;
 
@@ -125,8 +122,6 @@ public class ThemeService extends IThemeService.Stub {
             new RemoteCallbackList<IThemeProcessingListener>();
 
     final private ArrayList<String> mThemesToProcessQueue = new ArrayList<String>(0);
-
-    private final SettingsObserver mSettingsObserver = new SettingsObserver();
 
     private class ThemeWorkerHandler extends Handler {
         private static final int MESSAGE_CHANGE_THEME = 1;
@@ -141,8 +136,8 @@ public class ThemeService extends IThemeService.Stub {
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case MESSAGE_CHANGE_THEME:
-                    final ThemeChangeRequest request = (ThemeChangeRequest) msg.obj;
-                    doApplyTheme(request, msg.arg1 == 1);
+                    final Map<String, String> componentMap = (Map<String, String>) msg.obj;
+                    doApplyTheme(componentMap);
                     break;
                 case MESSAGE_APPLY_DEFAULT_THEME:
                     doApplyDefaultTheme();
@@ -193,13 +188,13 @@ public class ThemeService extends IThemeService.Stub {
                         } catch (PackageManager.NameNotFoundException e) {
                             name = null;
                         }
-
-                        int result = mPM.processThemeResources(pkgName);
-                        if (result < 0) {
-                            postFailedThemeInstallNotification(name != null ? name : pkgName);
+                        if (name != null) {
+                            int result = mPM.processThemeResources(pkgName);
+                            if (result < 0) {
+                                postFailedThemeInstallNotification(name);
+                            }
+                            sendThemeResourcesCachedBroadcast(pkgName, result);
                         }
-                        sendThemeResourcesCachedBroadcast(pkgName, result);
-
                         synchronized (mThemesToProcessQueue) {
                             mThemesToProcessQueue.remove(0);
                             if (mThemesToProcessQueue.size() > 0 &&
@@ -245,12 +240,6 @@ public class ThemeService extends IThemeService.Stub {
         IntentFilter filter = new IntentFilter(Intent.ACTION_WALLPAPER_CHANGED);
         mContext.registerReceiver(mWallpaperChangeReceiver, filter);
 
-        filter = new IntentFilter(Intent.ACTION_USER_SWITCHED);
-        mContext.registerReceiver(mUserChangeReceiver, filter);
-
-        // listen for alarm/notifications/ringtone changes
-        mSettingsObserver.register(true);
-
         mPM = mContext.getPackageManager();
 
         processInstalledThemes();
@@ -291,7 +280,7 @@ public class ThemeService extends IThemeService.Stub {
         // of the pkg with the system. If it is not compatible then we will add it to a theme
         // change request.
         Map<String, String> defaults = ThemeUtils.getDefaultComponents(mContext);
-        ThemeChangeRequest.Builder builder = new ThemeChangeRequest.Builder();
+        HashMap<String, String> changeThemeRequestMap = new HashMap<String, String>();
         for(Map.Entry<String, String> entry : currentThemeMap.entrySet()) {
             String component = entry.getKey();
             String pkgName = entry.getValue();
@@ -314,15 +303,14 @@ public class ThemeService extends IThemeService.Stub {
             if (!isThemeCompatibleWithUpgradedApi(pkgName)) {
                 Log.d(TAG, pkgName + "is incompatible with latest theme api for component " +
                         component + ", Applying " + defaultPkg);
-                builder.setComponent(component, pkgName);
+                changeThemeRequestMap.put(component, pkgName);
             }
         }
 
         // Now actually unapply the incompatible themes
-        ThemeChangeRequest request = builder.build();
-        if (!request.getThemeComponentsMap().isEmpty()) {
+        if (!changeThemeRequestMap.isEmpty()) {
             try {
-                requestThemeChange(request, true);
+                requestThemeChange(changeThemeRequestMap);
             } catch(RemoteException e) {
                 // This cannot happen
             }
@@ -373,89 +361,90 @@ public class ThemeService extends IThemeService.Stub {
         }
     }
 
-    private void doApplyTheme(ThemeChangeRequest request, boolean removePerAppTheme) {
+    private void doApplyTheme(Map<String, String> componentMap) {
         synchronized(this) {
             mProgress = 0;
         }
 
-        if (request == null || request.getNumChangesRequested() == 0) {
-            postFinish(true, request, 0);
+        if (componentMap == null || componentMap.size() == 0) {
+            postFinish(true, componentMap);
             return;
         }
         mIsThemeApplying = true;
-        long updateTime = System.currentTimeMillis();
-
-        // Stop listening for settings changes while applying theme
-        mSettingsObserver.register(false);
 
         incrementProgress(5);
 
         // TODO: provide progress updates that reflect the time needed for each component
-        final int progressIncrement = 75 / request.getNumChangesRequested();
+        final int progressIncrement = 75 / componentMap.size();
 
-        if (request.getIconsThemePackageName() != null) {
-            updateIcons(request.getIconsThemePackageName());
-            incrementProgress(progressIncrement);
-        }
-
-        if (request.getWallpaperThemePackageName() != null) {
-            if (updateWallpaper(request.getWallpaperThemePackageName(),
-                    request.getWallpaperId())) {
-                mWallpaperChangedByUs = true;
+        if (componentMap.containsKey(ThemesColumns.MODIFIES_ICONS)) {
+            if (!updateIcons(componentMap.get(ThemesColumns.MODIFIES_ICONS))) {
+                componentMap.remove(ThemesColumns.MODIFIES_ICONS);
             }
             incrementProgress(progressIncrement);
         }
 
-        if (request.getLockWallpaperThemePackageName() != null) {
-            updateLockscreen(request.getLockWallpaperThemePackageName());
+        if (componentMap.containsKey(ThemesColumns.MODIFIES_LAUNCHER)) {
+            if (updateWallpaper(componentMap.get(ThemesColumns.MODIFIES_LAUNCHER))) {
+                mWallpaperChangedByUs = true;
+            } else {
+                componentMap.remove(ThemesColumns.MODIFIES_LAUNCHER);
+            }
+            incrementProgress(progressIncrement);
+        }
+
+        if (componentMap.containsKey(ThemesColumns.MODIFIES_LOCKSCREEN)) {
+            if (!updateLockscreen(componentMap.get(ThemesColumns.MODIFIES_LOCKSCREEN))) {
+                componentMap.remove(ThemesColumns.MODIFIES_LOCKSCREEN);
+            }
+            incrementProgress(progressIncrement);
+        }
+
+        if (componentMap.containsKey(ThemesColumns.MODIFIES_NOTIFICATIONS)) {
+            if (!updateNotifications(componentMap.get(ThemesColumns.MODIFIES_NOTIFICATIONS))) {
+                componentMap.remove(ThemesColumns.MODIFIES_NOTIFICATIONS);
+            }
             incrementProgress(progressIncrement);
         }
 
         Environment.setUserRequired(false);
-        if (request.getNotificationThemePackageName() != null) {
-            updateNotifications(request.getNotificationThemePackageName());
+        if (componentMap.containsKey(ThemesColumns.MODIFIES_ALARMS)) {
+            if (!updateAlarms(componentMap.get(ThemesColumns.MODIFIES_ALARMS))) {
+                componentMap.remove(ThemesColumns.MODIFIES_ALARMS);
+            }
             incrementProgress(progressIncrement);
         }
 
-        if (request.getAlarmThemePackageName() != null) {
-            updateAlarms(request.getAlarmThemePackageName());
+        if (componentMap.containsKey(ThemesColumns.MODIFIES_RINGTONES)) {
+            if (!updateRingtones(componentMap.get(ThemesColumns.MODIFIES_RINGTONES))) {
+                componentMap.remove(ThemesColumns.MODIFIES_RINGTONES);
+            }
             incrementProgress(progressIncrement);
         }
 
-        if (request.getRingtoneThemePackageName() != null) {
-            updateRingtones(request.getRingtoneThemePackageName());
+        if (componentMap.containsKey(ThemesColumns.MODIFIES_BOOT_ANIM)) {
+            if (!updateBootAnim(componentMap.get(ThemesColumns.MODIFIES_BOOT_ANIM))) {
+                componentMap.remove(ThemesColumns.MODIFIES_BOOT_ANIM);
+            }
             incrementProgress(progressIncrement);
         }
         Environment.setUserRequired(true);
 
-        if (request.getBootanimationThemePackageName() != null) {
-            updateBootAnim(request.getBootanimationThemePackageName());
+        if (componentMap.containsKey(ThemesColumns.MODIFIES_FONTS)) {
+            if (!updateFonts(componentMap.get(ThemesColumns.MODIFIES_FONTS))) {
+                componentMap.remove(ThemesColumns.MODIFIES_FONTS);
+            }
             incrementProgress(progressIncrement);
         }
 
-        if (request.getFontThemePackageName() != null) {
-            updateFonts(request.getFontThemePackageName());
-            incrementProgress(progressIncrement);
-        }
+        updateProvider(componentMap);
 
-        try {
-            updateProvider(request, updateTime);
-        } catch(IllegalArgumentException e) {
-            // Safeguard against provider not being ready yet.
-            Log.e(TAG, "Not updating the theme provider since it is unavailable");
-        }
+        updateConfiguration(componentMap);
 
-        if (shouldUpdateConfiguration(request)) {
-            updateConfiguration(request, removePerAppTheme);
-        }
+        killLaunchers(componentMap);
 
-        killLaunchers(request);
-
-        postFinish(true, request, updateTime);
+        postFinish(true, componentMap);
         mIsThemeApplying = false;
-
-        // Start listening for settings changes while applying theme
-        mSettingsObserver.register(true);
     }
 
     private void doApplyDefaultTheme() {
@@ -472,12 +461,12 @@ public class ThemeService extends IThemeService.Stub {
                 components = new ArrayList<String>(
                         Arrays.asList(defaultThemeComponents.split("\\|")));
             }
-            ThemeChangeRequest.Builder builder = new ThemeChangeRequest.Builder();
+            Map<String, String> componentMap = new HashMap<String, String>(components.size());
             for (String component : components) {
-                builder.setComponent(component, defaultThemePkg);
+                componentMap.put(component, defaultThemePkg);
             }
             try {
-                requestThemeChange(builder.build(), true);
+                requestThemeChange(componentMap);
             } catch (RemoteException e) {
                 Log.w(TAG, "Unable to set default theme", e);
             }
@@ -489,10 +478,9 @@ public class ThemeService extends IThemeService.Stub {
         processInstalledThemes();
     }
 
-    private void updateProvider(ThemeChangeRequest request, long updateTime) {
+    private void updateProvider(Map<String, String> componentMap) {
         ContentValues values = new ContentValues();
-        values.put(MixnMatchColumns.COL_UPDATE_TIME, updateTime);
-        Map<String, String> componentMap = request.getThemeComponentsMap();
+
         for (String component : componentMap.keySet()) {
             values.put(ThemesContract.MixnMatchColumns.COL_VALUE, componentMap.get(component));
             String where = ThemesContract.MixnMatchColumns.COL_KEY + "=?";
@@ -500,12 +488,6 @@ public class ThemeService extends IThemeService.Stub {
             if (selectionArgs[0] == null) {
                 continue; // No equivalence between mixnmatch and theme
             }
-
-            // Add component ID for multiwallpaper
-            if (ThemesColumns.MODIFIES_LAUNCHER.equals(component)) {
-                values.put(MixnMatchColumns.COL_COMPONENT_ID, request.getWallpaperId());
-            }
-
             mContext.getContentResolver().update(MixnMatchColumns.CONTENT_URI, values, where,
                     selectionArgs);
         }
@@ -527,7 +509,7 @@ public class ThemeService extends IThemeService.Stub {
 
     private boolean updateFonts(String pkgName) {
         //Clear the font dir
-        FileUtils.deleteContents(new File(ThemeUtils.SYSTEM_THEME_FONT_PATH));
+        ThemeUtils.deleteFilesInDir(ThemeUtils.SYSTEM_THEME_FONT_PATH);
 
         if (!pkgName.equals(SYSTEM_DEFAULT)) {
             //Get Font Assets
@@ -677,7 +659,11 @@ public class ThemeService extends IThemeService.Stub {
     private boolean setCustomLockScreenWallpaper(String pkgName) {
         WallpaperManager wm = WallpaperManager.getInstance(mContext);
         try {
-            if (SYSTEM_DEFAULT.equals(pkgName) || TextUtils.isEmpty(pkgName)) {
+            if (SYSTEM_DEFAULT.equals(pkgName)) {
+                final Bitmap bmp = BitmapFactory.decodeResource(mContext.getResources(),
+                        com.android.internal.R.drawable.default_wallpaper);
+                wm.setKeyguardBitmap(bmp);
+            } else if (TextUtils.isEmpty(pkgName)) {
                 wm.clearKeyguardWallpaper();
             } else {
                 InputStream in = ImageUtils.getCroppedKeyguardStream(pkgName, mContext);
@@ -693,45 +679,69 @@ public class ThemeService extends IThemeService.Stub {
         return true;
     }
 
-    private boolean updateWallpaper(String pkgName, long id) {
+    private boolean updateWallpaper(String pkgName) {
+        String selection = ThemesColumns.PKG_NAME + "= ?";
+        String[] selectionArgs = { pkgName };
+        Cursor c = mContext.getContentResolver().query(ThemesColumns.CONTENT_URI,
+                null, selection,
+                selectionArgs, null);
+        c.moveToFirst();
         WallpaperManager wm = WallpaperManager.getInstance(mContext);
         if (SYSTEM_DEFAULT.equals(pkgName)) {
             try {
                 wm.clear();
             } catch (IOException e) {
                 return false;
+            } finally {
+                c.close();
             }
         } else if (TextUtils.isEmpty(pkgName)) {
             try {
                 wm.clear(false);
             } catch (IOException e) {
                 return false;
+            } finally {
+                c.close();
             }
         } else {
             InputStream in = null;
             try {
-                in = ImageUtils.getCroppedWallpaperStream(pkgName, id, mContext);
+                in = ImageUtils.getCroppedWallpaperStream(pkgName, mContext);
                 if (in != null)
                     wm.setStream(in);
             } catch (Exception e) {
                 return false;
             } finally {
                 ThemeUtils.closeQuietly(in);
+                c.close();
             }
         }
         return true;
     }
 
-    private boolean updateConfiguration(ThemeChangeRequest request,
-            boolean removePerAppThemes) {
+    private boolean updateConfiguration(Map<String, String> components) {
         final IActivityManager am = ActivityManagerNative.getDefault();
         if (am != null) {
             final long token = Binder.clearCallingIdentity();
             try {
                 Configuration config = am.getConfiguration();
-                ThemeConfig.Builder themeBuilder = createBuilderFrom(config, request, null,
-                        removePerAppThemes);
+                ThemeConfig.Builder themeBuilder = createBuilderFrom(config, components, null);
                 ThemeConfig newConfig = themeBuilder.build();
+
+                // If this is a theme upgrade then new config equals existing config. The result
+                // is that the config is not considered changed and therefore not propagated,
+                // which can be problem if the APK path changes (ex theme-1.apk -> theme-2.apk)
+                if (newConfig.equals(config.themeConfig)) {
+                    // We can't just use null for the themeConfig, it won't be registered as
+                    // a changed config value because of the way equals in config had to be written.
+                    final String defaultThemePkg =
+                            Settings.Secure.getString(mContext.getContentResolver(),
+                            Settings.Secure.DEFAULT_THEME_PACKAGE);
+                    ThemeConfig.Builder defaultBuilder =
+                            createBuilderFrom(config, components, defaultThemePkg);
+                    config.themeConfig = defaultBuilder.build();
+                    am.updateConfiguration(config);
+                }
 
                 config.themeConfig = newConfig;
                 am.updateConfiguration(config);
@@ -744,92 +754,43 @@ public class ThemeService extends IThemeService.Stub {
         return true;
     }
 
-    private boolean updateConfiguration(ThemeConfig themeConfig) {
-        final IActivityManager am = ActivityManagerNative.getDefault();
-        if (am != null) {
-            final long token = Binder.clearCallingIdentity();
-            try {
-                Configuration config = am.getConfiguration();
-
-                config.themeConfig = themeConfig;
-                am.updateConfiguration(config);
-            } catch (RemoteException e) {
-                return false;
-            } finally {
-                Binder.restoreCallingIdentity(token);
-            }
-        }
-        return true;
-    }
-
-    private boolean shouldUpdateConfiguration(ThemeChangeRequest request) {
-        return request.getOverlayThemePackageName() != null ||
-                request.getFontThemePackageName() != null ||
-                request.getIconsThemePackageName() != null ||
-                request.getStatusBarThemePackageName() != null ||
-                request.getNavBarThemePackageName() != null ||
-                request.getPerAppOverlays().size() > 0;
-    }
-
     private static ThemeConfig.Builder createBuilderFrom(Configuration config,
-            ThemeChangeRequest request, String pkgName, boolean removePerAppThemes) {
+            Map<String, String> componentMap, String pkgName) {
         ThemeConfig.Builder builder = new ThemeConfig.Builder(config.themeConfig);
 
-        if (removePerAppThemes) removePerAppThemesFromConfig(builder, config.themeConfig);
-
-        if (request.getIconsThemePackageName() != null) {
-            builder.defaultIcon(pkgName == null ? request.getIconsThemePackageName() : pkgName);
+        if (componentMap.containsKey(ThemesColumns.MODIFIES_ICONS)) {
+            builder.defaultIcon(pkgName == null ?
+                    componentMap.get(ThemesColumns.MODIFIES_ICONS) : pkgName);
         }
 
-        if (request.getOverlayThemePackageName() != null) {
+        if (componentMap.containsKey(ThemesColumns.MODIFIES_OVERLAYS)) {
             builder.defaultOverlay(pkgName == null ?
-                    request.getOverlayThemePackageName() : pkgName);
+                    componentMap.get(ThemesColumns.MODIFIES_OVERLAYS) : pkgName);
         }
 
-        if (request.getFontThemePackageName() != null) {
-            builder.defaultFont(pkgName == null ? request.getFontThemePackageName() : pkgName);
+        if (componentMap.containsKey(ThemesColumns.MODIFIES_FONTS)) {
+            builder.defaultFont(pkgName == null ?
+                    componentMap.get(ThemesColumns.MODIFIES_FONTS) : pkgName);
         }
 
-        if (request.getStatusBarThemePackageName() != null) {
+        if (componentMap.containsKey(ThemesColumns.MODIFIES_STATUS_BAR)) {
             builder.overlay(ThemeConfig.SYSTEMUI_STATUS_BAR_PKG, pkgName == null ?
-                    request.getStatusBarThemePackageName() : pkgName);
+                    componentMap.get(ThemesColumns.MODIFIES_STATUS_BAR) : pkgName);
         }
 
-        if (request.getNavBarThemePackageName() != null) {
+        if (componentMap.containsKey(ThemesColumns.MODIFIES_NAVIGATION_BAR)) {
             builder.overlay(ThemeConfig.SYSTEMUI_NAVBAR_PKG, pkgName == null ?
-                    request.getNavBarThemePackageName() : pkgName);
+                    componentMap.get(ThemesColumns.MODIFIES_NAVIGATION_BAR) : pkgName);
         }
-
-        // check for any per app overlays being applied
-        Map<String, String> appOverlays = request.getPerAppOverlays();
-        for (String appPkgName : appOverlays.keySet()) {
-            if (appPkgName != null) {
-                builder.overlay(appPkgName, appOverlays.get(appPkgName));
-            }
-        }
-
-        builder.setLastThemeChangeRequestType(request.getReqeustType());
 
         return builder;
     }
 
-    private static void removePerAppThemesFromConfig(ThemeConfig.Builder builder,
-            ThemeConfig themeConfig) {
-        if (themeConfig != null) {
-            Map<String, ThemeConfig.AppTheme> themes = themeConfig.getAppThemes();
-            for (String appPkgName : themes.keySet()) {
-                if (ThemeUtils.isPerAppThemeComponent(appPkgName)) {
-                    builder.overlay(appPkgName, null);
-                }
-            }
-        }
-    }
-
     // Kill the current Home process, they tend to be evil and cache
     // drawable references in all apps
-    private void killLaunchers(ThemeChangeRequest request) {
-        if (request.getOverlayThemePackageName() == null
-                && request.getIconsThemePackageName() == null) {
+    private void killLaunchers(Map<String, String> componentMap) {
+        if (!(componentMap.containsKey(ThemesColumns.MODIFIES_ICONS)
+                || componentMap.containsKey(ThemesColumns.MODIFIES_OVERLAYS))) {
             return;
         }
 
@@ -878,7 +839,7 @@ public class ThemeService extends IThemeService.Stub {
     private void postProgress() {
         int N = mClients.beginBroadcast();
         for(int i=0; i < N; i++) {
-            IThemeChangeListener listener = mClients.getBroadcastItem(i);
+            IThemeChangeListener listener = mClients.getBroadcastItem(0);
             try {
                 listener.onProgress(mProgress);
             } catch(RemoteException e) {
@@ -888,14 +849,14 @@ public class ThemeService extends IThemeService.Stub {
         mClients.finishBroadcast();
     }
 
-    private void postFinish(boolean isSuccess, ThemeChangeRequest request, long updateTime) {
+    private void postFinish(boolean isSuccess, Map<String, String> componentMap) {
         synchronized(this) {
             mProgress = 0;
         }
 
         int N = mClients.beginBroadcast();
         for(int i=0; i < N; i++) {
-            IThemeChangeListener listener = mClients.getBroadcastItem(i);
+            IThemeChangeListener listener = mClients.getBroadcastItem(0);
             try {
                 listener.onFinish(isSuccess);
             } catch(RemoteException e) {
@@ -906,14 +867,14 @@ public class ThemeService extends IThemeService.Stub {
 
         // if successful, broadcast that the theme changed
         if (isSuccess) {
-            broadcastThemeChange(request, updateTime);
+            broadcastThemeChange(componentMap);
         }
     }
 
     private void postFinishedProcessing(String pkgName) {
         int N = mProcessingListeners.beginBroadcast();
         for(int i=0; i < N; i++) {
-            IThemeProcessingListener listener = mProcessingListeners.getBroadcastItem(i);
+            IThemeProcessingListener listener = mProcessingListeners.getBroadcastItem(0);
             try {
                 listener.onFinishedProcessing(pkgName);
             } catch(RemoteException e) {
@@ -923,15 +884,10 @@ public class ThemeService extends IThemeService.Stub {
         mProcessingListeners.finishBroadcast();
     }
 
-    private void broadcastThemeChange(ThemeChangeRequest request, long updateTime) {
-        Map<String, String> componentMap = request.getThemeComponentsMap();
-        if (componentMap == null || componentMap.size() == 0) return;
-
+    private void broadcastThemeChange(Map<String, String> components) {
         final Intent intent = new Intent(ThemeUtils.ACTION_THEME_CHANGED);
-        ArrayList componentsArrayList = new ArrayList(componentMap.keySet());
-        intent.putStringArrayListExtra(ThemeUtils.EXTRA_COMPONENTS, componentsArrayList);
-        intent.putExtra(ThemeUtils.EXTRA_REQUEST_TYPE, request.getReqeustType().ordinal());
-        intent.putExtra(ThemeUtils.EXTRA_UPDATE_TIME, updateTime);
+        ArrayList componentsArrayList = new ArrayList(components.keySet());
+        intent.putStringArrayListExtra("components", componentsArrayList);
         mContext.sendBroadcastAsUser(intent, UserHandle.ALL);
     }
 
@@ -958,8 +914,7 @@ public class ThemeService extends IThemeService.Stub {
     }
 
     @Override
-    public void requestThemeChange(ThemeChangeRequest request, boolean removePerAppThemes)
-            throws RemoteException {
+    public void requestThemeChange(Map componentMap) throws RemoteException {
         mContext.enforceCallingOrSelfPermission(
                 Manifest.permission.ACCESS_THEME_MANAGER, null);
         Message msg;
@@ -973,7 +928,6 @@ public class ThemeService extends IThemeService.Stub {
          * the theme will be applied once the processing is done.
          */
         synchronized (mThemesToProcessQueue) {
-            Map<String, String> componentMap = request.getThemeComponentsMap();
             for (Object key : componentMap.keySet()) {
                 if (ThemesColumns.MODIFIES_OVERLAYS.equals(key) ||
                         ThemesColumns.MODIFIES_NAVIGATION_BAR.equals(key) ||
@@ -985,17 +939,16 @@ public class ThemeService extends IThemeService.Stub {
                         mThemesToProcessQueue.add(0, pkgName);
                         // We want to make sure these resources are taken care of first so
                         // send the dequeue message and place it in the front of the queue
-                        msg = mResourceProcessingHandler.obtainMessage(
+                        msg = mHandler.obtainMessage(
                                 ResourceProcessingHandler.MESSAGE_DEQUEUE_AND_PROCESS_THEME);
-                        mResourceProcessingHandler.sendMessageAtFrontOfQueue(msg);
+                        mHandler.sendMessageAtFrontOfQueue(msg);
                     }
                 }
             }
         }
         msg = Message.obtain();
         msg.what = ThemeWorkerHandler.MESSAGE_CHANGE_THEME;
-        msg.obj = request;
-        msg.arg1 = removePerAppThemes ? 1 : 0;
+        msg.obj = componentMap;
         mHandler.sendMessage(msg);
     }
 
@@ -1149,33 +1102,11 @@ public class ThemeService extends IThemeService.Stub {
         public void onReceive(Context context, Intent intent) {
             if (!mWallpaperChangedByUs) {
                 // In case the mixnmatch table has a mods_launcher entry, we'll clear it
-                ThemeChangeRequest.Builder builder = new ThemeChangeRequest.Builder();
-                builder.setWallpaper("");
-                updateProvider(builder.build(), System.currentTimeMillis());
+                Map<String, String> components = new HashMap<String, String>(1);
+                components.put(ThemesColumns.MODIFIES_LAUNCHER, "");
+                updateProvider(components);
             } else {
                 mWallpaperChangedByUs = false;
-            }
-        }
-    };
-
-    private BroadcastReceiver mUserChangeReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            int userHandle = intent.getIntExtra(Intent.EXTRA_USER_HANDLE, -1);
-            if (userHandle >= 0 && userHandle != mCurrentUserId) {
-                mCurrentUserId = userHandle;
-                ThemeConfig config = ThemeConfig.getBootThemeForUser(mContext.getContentResolver(),
-                        userHandle);
-                if (DEBUG) {
-                    Log.d(TAG,
-                            "Changing theme for user " + userHandle + " to " + config.toString());
-                }
-                ThemeChangeRequest request = new ThemeChangeRequest.Builder(config).build();
-                try {
-                    requestThemeChange(request, true);
-                } catch (RemoteException e) {
-                    Log.e(TAG, "Unable to change theme for user change", e);
-                }
             }
         }
     };
@@ -1246,55 +1177,5 @@ public class ThemeService extends IThemeService.Stub {
         }
 
         return null;
-    }
-
-    private final class SettingsObserver extends ContentObserver {
-        private final Uri ALARM_ALERT_URI =
-                Settings.System.DEFAULT_ALARM_ALERT_URI;
-        private final Uri NOTIFICATION_URI =
-                Settings.System.DEFAULT_NOTIFICATION_URI;
-        private final Uri RINGTONE_URI =
-                Settings.System.DEFAULT_RINGTONE_URI;
-
-        public SettingsObserver() {
-            super(null);
-        }
-
-        public void register(boolean register) {
-            final ContentResolver cr = mContext.getContentResolver();
-            if (register) {
-                cr.registerContentObserver(ALARM_ALERT_URI, false, this);
-                cr.registerContentObserver(NOTIFICATION_URI, false, this);
-                cr.registerContentObserver(RINGTONE_URI, false, this);
-            } else {
-                cr.unregisterContentObserver(this);
-            }
-        }
-
-        @Override
-        public void onChange(boolean selfChange, Uri uri) {
-            super.onChange(selfChange, uri);
-            boolean changed = false;
-            ThemeChangeRequest.Builder builder = new ThemeChangeRequest.Builder();
-            if (ALARM_ALERT_URI.equals(uri)) {
-                // In case the mixnmatch table has a mods_alarms entry, we'll clear it
-                builder.setAlarm("");
-                changed = true;
-            }
-            if (NOTIFICATION_URI.equals(uri)) {
-                // In case the mixnmatch table has a mods_notifications entry, we'll clear it
-                builder.setNotification("");
-                changed = true;
-            }
-            if (RINGTONE_URI.equals(uri)) {
-                // In case the mixnmatch table has a mods_ringtones entry, we'll clear it
-                builder.setRingtone("");
-                changed = true;
-            }
-
-            if (changed) {
-                updateProvider(builder.build(), System.currentTimeMillis());
-            }
-        }
     }
 }

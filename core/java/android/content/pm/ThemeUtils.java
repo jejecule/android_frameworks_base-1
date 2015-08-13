@@ -15,6 +15,7 @@
  */
 package android.content.pm;
 
+import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -26,6 +27,7 @@ import android.content.res.Configuration;
 import android.content.res.ThemeConfig;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.FileUtils;
@@ -71,7 +73,8 @@ public class ThemeUtils {
     public static final String ICONS_PATH = "assets/icons/";
     public static final String COMMON_RES_PATH = "assets/overlays/common/";
     public static final String FONT_XML = "fonts.xml";
-    public static final String RESOURCE_CACHE_DIR = "/data/resource-cache/";
+    public static final String RESTABLE_EXTENSION = ".arsc";
+    public static final String IDMAP_PREFIX = "/data/resource-cache/";
     public static final String IDMAP_SUFFIX = "@idmap";
     public static final String COMMON_RES_SUFFIX = ".common";
     public static final String COMMON_RES_TARGET = "common";
@@ -99,34 +102,17 @@ public class ThemeUtils {
     public static final String SYSTEM_NOTIFICATIONS_PATH = SYSTEM_MEDIA_PATH + File.separator
             + "notifications";
 
-    // path to asset lockscreen and wallpapers directory
-    public static final String LOCKSCREEN_WALLPAPER_PATH = "lockscreen";
-    public static final String WALLPAPER_PATH = "wallpapers";
-
     private static final String MEDIA_CONTENT_URI = "content://media/internal/audio/media";
 
-    // Constants for theme change broadcast
     public static final String ACTION_THEME_CHANGED = "org.cyanogenmod.intent.action.THEME_CHANGED";
+
     public static final String CATEGORY_THEME_COMPONENT_PREFIX = "org.cyanogenmod.intent.category.";
-    public static final String EXTRA_COMPONENTS = "components";
-    public static final String EXTRA_REQUEST_TYPE = "request_type";
-    public static final String EXTRA_UPDATE_TIME = "update_time";
 
     public static final int SYSTEM_TARGET_API = 0;
-
-    // Package name for any app which does not have a specific theme applied
-    private static final String DEFAULT_PKG = "default";
 
     private static final String SETTINGS_DB =
             "/data/data/com.android.providers.settings/databases/settings.db";
     private static final String SETTINGS_SECURE_TABLE = "secure";
-
-    /**
-     * IDMAP hash version code used to alter the resulting hash and force recreating
-     * of the idmap.  This value should be changed whenever there is a need to force
-     * an update to all idmaps.
-     */
-    private static final byte IDMAP_HASH_VERSION = 3;
 
     // Actions in manifests which identify legacy icon packs
     public static final String[] sSupportedActions = new String[] {
@@ -143,40 +129,47 @@ public class ThemeUtils {
     };
 
 
-    /**
-     * Get the root path of the resource cache for the given theme
-     * @param themePkgName
-     * @return Root resource cache path for the given theme
+    /*
+     * Retrieve the path to a resource table (ie resource.arsc)
+     * Themes have a resources.arsc for every overlay package targeted. These are compiled
+     * at install time and stored in the data partition.
+     *
      */
-    public static String getOverlayResourceCacheDir(String themePkgName) {
-        return RESOURCE_CACHE_DIR + themePkgName;
+    public static String getResTablePath(String targetPkgName, PackageInfo overlayPkg) {
+        return getResTablePath(targetPkgName, overlayPkg.applicationInfo.publicSourceDir);
     }
 
-    /**
-     * Get the path of the resource cache for the given target and theme
-     * @param targetPkgName
-     * @param themePkg
-     * @return Path to the resource cache for this target and theme
+    public static String getResTablePath(String targetPkgName, PackageParser.Package overlayPkg) {
+        return getResTablePath(targetPkgName, overlayPkg.applicationInfo.publicSourceDir);
+    }
+
+    public static String getResTablePath(String targetPkgName, String overlayApkPath) {
+        String restablePath = getResDir(targetPkgName, overlayApkPath) + "/resources.arsc";
+        return restablePath;
+    }
+
+    /*
+     * Retrieve the path to the directory where resource table (ie resource.arsc) resides
+     * Themes have a resources.arsc for every overlay package targeted. These are compiled
+     * at install time and stored in the data partition.
+     *
      */
-    public static String getTargetCacheDir(String targetPkgName, PackageInfo themePkg) {
-        return getTargetCacheDir(targetPkgName, themePkg.packageName);
+    public static String getResDir(String targetPkgName, PackageInfo overlayPkg) {
+        return getResDir(targetPkgName, overlayPkg.applicationInfo.publicSourceDir);
     }
 
-    public static String getTargetCacheDir(String targetPkgName, PackageParser.Package themePkg) {
-        return getTargetCacheDir(targetPkgName, themePkg.packageName);
+    public static String getResDir(String targetPkgName, PackageParser.Package overlayPkg) {
+        return getResDir(targetPkgName, overlayPkg.applicationInfo.publicSourceDir);
     }
 
-    public static String getTargetCacheDir(String targetPkgName, String themePkgName) {
-        return getOverlayResourceCacheDir(themePkgName) + File.separator + targetPkgName;
+    public static String getResDir(String targetPkgName, String overlayApkPath) {
+        String restableName = overlayApkPath.replaceAll("/", "@") + "@" + targetPkgName;
+        if (restableName.startsWith("@")) restableName = restableName.substring(1);
+        return IDMAP_PREFIX + restableName;
     }
 
-    /**
-     * Get the path to the icons for the given theme
-     * @param pkgName
-     * @return
-     */
     public static String getIconPackDir(String pkgName) {
-      return getOverlayResourceCacheDir(pkgName) + File.separator + "icons";
+      return IDMAP_PREFIX + pkgName;
     }
 
     public static String getIconHashFile(String pkgName) {
@@ -189,10 +182,6 @@ public class ThemeUtils {
 
     public static String getIconPackResPath(String pkgName) {
         return getIconPackDir(pkgName) + "/resources.arsc";
-    }
-
-    public static String getIdmapPath(String targetPkgName, String overlayPkgName) {
-        return getTargetCacheDir(targetPkgName, overlayPkgName) + File.separator + "idmap";
     }
 
     public static String getOverlayPathToTarget(String targetPkgName) {
@@ -210,7 +199,7 @@ public class ThemeUtils {
     }
 
     public static void createCacheDirIfNotExists() throws IOException {
-        File file = new File(RESOURCE_CACHE_DIR);
+        File file = new File(IDMAP_PREFIX);
         if (!file.exists() && !file.mkdir()) {
             throw new IOException("Could not create dir: " + file.toString());
         }
@@ -218,10 +207,9 @@ public class ThemeUtils {
                 | FileUtils.S_IRWXG | FileUtils.S_IROTH | FileUtils.S_IXOTH, -1, -1);
     }
 
-    public static void createResourcesDirIfNotExists(String targetPkgName, String overlayPkgName)
+    public static void createResourcesDirIfNotExists(String targetPkgName, String overlayApkPath)
             throws IOException {
-        createDirIfNotExists(getOverlayResourceCacheDir(overlayPkgName));
-        File file = new File(getTargetCacheDir(targetPkgName, overlayPkgName));
+        File file = new File(getResDir(targetPkgName, overlayApkPath));
         if (!file.exists() && !file.mkdir()) {
             throw new IOException("Could not create dir: " + file.toString());
         }
@@ -230,7 +218,6 @@ public class ThemeUtils {
     }
 
     public static void createIconDirIfNotExists(String pkgName) throws IOException {
-        createDirIfNotExists(getOverlayResourceCacheDir(pkgName));
         File file = new File(getIconPackDir(pkgName));
         if (!file.exists() && !file.mkdir()) {
             throw new IOException("Could not create dir: " + file.toString());
@@ -297,7 +284,18 @@ public class ThemeUtils {
     }
 
     public static void clearIconCache() {
-        FileUtils.deleteContents(new File(SYSTEM_THEME_ICON_CACHE_DIR));
+        deleteFilesInDir(SYSTEM_THEME_ICON_CACHE_DIR);
+    }
+
+    //Note: will not delete populated subdirs
+    public static void deleteFilesInDir(String dirPath) {
+        File fontDir = new File(dirPath);
+        File[] files = fontDir.listFiles();
+        if (files != null) {
+            for(File file : fontDir.listFiles()) {
+                file.delete();
+            }
+        }
     }
 
     public static InputStream getInputStreamFromAsset(Context ctx, String path) throws IOException {
@@ -539,29 +537,17 @@ public class ThemeUtils {
     }
 
     public static String getLockscreenWallpaperPath(AssetManager assetManager) throws IOException {
-        String[] assets = assetManager.list(LOCKSCREEN_WALLPAPER_PATH);
+        String[] assets = assetManager.list("lockscreen");
         String asset = getFirstNonEmptyAsset(assets);
         if (asset == null) return null;
-        return LOCKSCREEN_WALLPAPER_PATH + File.separator + asset;
+        return "lockscreen/" + asset;
     }
 
     public static String getWallpaperPath(AssetManager assetManager) throws IOException {
-        String[] assets = assetManager.list(WALLPAPER_PATH);
+        String[] assets = assetManager.list("wallpapers");
         String asset = getFirstNonEmptyAsset(assets);
         if (asset == null) return null;
-        return WALLPAPER_PATH + File.separator + asset;
-    }
-
-    public static List<String> getWallpaperPathList(AssetManager assetManager)
-            throws IOException {
-        List<String> wallpaperList = new ArrayList<String>();
-        String[] assets = assetManager.list(WALLPAPER_PATH);
-        for (String asset : assets) {
-            if (!TextUtils.isEmpty(asset)) {
-                wallpaperList.add(WALLPAPER_PATH + File.separator + asset);
-            }
-        }
-        return wallpaperList;
+        return "wallpapers/" + asset;
     }
 
     // Returns the first non-empty asset name. Empty assets can occur if the APK is built
@@ -571,7 +557,7 @@ public class ThemeUtils {
         if (assets == null) return null;
         String filename = null;
         for(String asset : assets) {
-            if (!TextUtils.isEmpty(asset)) {
+            if (!asset.isEmpty()) {
                 filename = asset;
                 break;
             }
@@ -646,17 +632,14 @@ public class ThemeUtils {
         Cursor c = context.getContentResolver().query(ThemesContract.ThemesColumns.CONTENT_URI,
                 null, selection, selectionArgs, null);
 
-        if (c != null) {
-            if (c.moveToFirst()) {
-                List<String> allComponents = getAllComponents();
-                for (String component : allComponents) {
-                    int index = c.getColumnIndex(component);
-                    if (c.getInt(index) == 1) {
-                        supportedComponents.add(component);
-                    }
+        if (c != null && c.moveToFirst()) {
+            List<String> allComponents = getAllComponents();
+            for(String component : allComponents) {
+                int index = c.getColumnIndex(component);
+                if (c.getInt(index) == 1) {
+                    supportedComponents.add(component);
                 }
             }
-            c.close();
         }
         return supportedComponents;
     }
@@ -752,28 +735,5 @@ public class ThemeUtils {
         }
 
         return config;
-    }
-
-    /**
-     * Convenience method to determine if a theme component is a per app theme and not a standard
-     * component.
-     * @param component
-     * @return
-     */
-    public static boolean isPerAppThemeComponent(String component) {
-        return !(DEFAULT_PKG.equals(component)
-                || ThemeConfig.SYSTEMUI_STATUS_BAR_PKG.equals(component)
-                || ThemeConfig.SYSTEMUI_NAVBAR_PKG.equals(component));
-    }
-
-    /**
-     * Get a 32 bit hashcode for the given package.
-     * @param pkg
-     * @return
-     */
-    public static int getPackageHashCode(PackageParser.Package pkg) {
-        int hash = pkg.manifestDigest != null ? pkg.manifestDigest.hashCode() : 0;
-        hash = 31 * hash + IDMAP_HASH_VERSION;
-        return hash;
     }
 }

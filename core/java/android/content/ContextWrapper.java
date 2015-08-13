@@ -122,12 +122,6 @@ public class ContextWrapper extends Context {
         return mBase.getTheme();
     }
 
-    /** @hide */
-    @Override
-    public void recreateTheme() {
-        mBase.recreateTheme();
-    }
-
     @Override
     public ClassLoader getClassLoader() {
         return mBase.getClassLoader();

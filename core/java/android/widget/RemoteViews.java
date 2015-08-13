@@ -2672,7 +2672,7 @@ public class RemoteViews implements Parcelable, Filter {
                 return context;
             }
             try {
-                return context.createApplicationContext(mApplication, themePackageName,
+                return context.createApplicationContext(mApplication,
                         Context.CONTEXT_RESTRICTED);
             } catch (NameNotFoundException e) {
                 Log.e(LOG_TAG, "Package name " + mApplication.packageName + " not found");

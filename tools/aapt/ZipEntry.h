@@ -50,7 +50,7 @@ public:
     ZipEntry(void)
         : mDeleted(false), mMarked(false)
         {}
-    virtual ~ZipEntry(void) {}
+    ~ZipEntry(void) {}
 
     /*
      * Returns "true" if the data is compressed.

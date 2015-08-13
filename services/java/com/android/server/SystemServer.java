@@ -985,14 +985,12 @@ public final class SystemServer {
                 mSystemServiceManager.startService(TvInputManagerService.class);
             }
 
-            if (!disableNonCoreServices && !mOnlyCore) {
-                try {
-                    Slog.i(TAG, "Theme Service");
-                    themeService = new ThemeService(context);
-                    ServiceManager.addService(Context.THEME_SERVICE, themeService);
-                } catch (Throwable e) {
-                    reportWtf("starting Theme Service", e);
-                }
+            try {
+                Slog.i(TAG, "Theme Service");
+                themeService = new ThemeService(context);
+                ServiceManager.addService(Context.THEME_SERVICE, themeService);
+            } catch (Throwable e) {
+                reportWtf("starting Theme Service", e);
             }
 
             if (!disableNonCoreServices) {
@@ -1156,14 +1154,14 @@ public final class SystemServer {
         }
 
         IntentFilter filter = new IntentFilter();
-        filter.addAction(Intent.ACTION_APP_FAILURE);
-        filter.addAction(Intent.ACTION_APP_FAILURE_RESET);
+        filter.addAction(Intent.ACTION_APP_LAUNCH_FAILURE);
+        filter.addAction(Intent.ACTION_APP_LAUNCH_FAILURE_RESET);
         filter.addAction(Intent.ACTION_PACKAGE_ADDED);
         filter.addAction(Intent.ACTION_PACKAGE_REMOVED);
         filter.addAction(ThemeUtils.ACTION_THEME_CHANGED);
         filter.addCategory(Intent.CATEGORY_THEME_PACKAGE_INSTALLED_STATE_CHANGE);
         filter.addDataScheme("package");
-        context.registerReceiver(new AppsFailureReceiver(), filter);
+        context.registerReceiver(new AppsLaunchFailureReceiver(), filter);
 
         // These are needed to propagate to the runnable below.
         final MountService mountServiceF = mountService;

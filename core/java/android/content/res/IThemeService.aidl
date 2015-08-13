@@ -17,7 +17,6 @@ package android.content.res;
 
 import android.content.res.IThemeChangeListener;
 import android.content.res.IThemeProcessingListener;
-import android.content.res.ThemeChangeRequest;
 import android.graphics.Bitmap;
 
 import java.util.Map;
@@ -27,7 +26,7 @@ interface IThemeService {
     void requestThemeChangeUpdates(in IThemeChangeListener listener);
     void removeUpdates(in IThemeChangeListener listener);
 
-    void requestThemeChange(in ThemeChangeRequest request, boolean removePerAppThemes);
+    void requestThemeChange(in Map componentMap);
     void applyDefaultTheme();
     boolean isThemeApplying();
     int getProgress();

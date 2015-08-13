@@ -78,10 +78,6 @@
   <!-- Doze Settings -->
   <java-symbol type="bool" name="config_dozeUseAccelerometer" />
 
-  <!-- Theme reset notification -->
-  <java-symbol type="string" name="theme_reset_notification_title" />
-  <java-symbol type="string" name="theme_reset_notification_body" />
-
   <!-- global actions (zen mode buttons) -->
   <java-symbol type="id" name="option4" />
   <java-symbol type="id" name="option5" />
@@ -106,4 +102,6 @@
   <java-symbol type="integer" name="config_nightColorTemperature" />
   <java-symbol type="integer" name="config_outdoorAmbientLux" />
 
+=======
+>>>>>>> parent of 175f081... Themes: Watch all app crashes for problematic themes:core/res/res/values/pa_symbols.xml
 </resources>
