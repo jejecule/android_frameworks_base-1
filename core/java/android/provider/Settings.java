@@ -3319,6 +3319,21 @@ public final class Settings {
          */
         public static final String SAFE_HEADSET_VOLUME = "safe_headset_volume";
 
+
+        /**
+         * Shake to clean recents app screen
+         * @hide
+         *
+         */
+        public static final String SHAKE_TO_CLEAN_RECENTS = "shake_to_clean_recents";
+
+        /**
+         * Shake to clean notifications
+         * @hide
+         *
+         */
+        public static final String SHAKE_TO_CLEAN_NOTIFICATIONS = "shake_to_clean_notifications";
+
         /**
          * Settings to backup. This is here so that it's in the same place as the settings
          * keys and easy to update.
@@ -3429,7 +3444,9 @@ public final class Settings {
          */
         public static final String[] SETTINGS_TO_RESET = {
             QUICK_SETTINGS_QUICK_PULL_DOWN,
-            SAFE_HEADSET_VOLUME
+            SAFE_HEADSET_VOLUME,
+            SHAKE_TO_CLEAN_RECENTS,
+            SHAKE_TO_CLEAN_NOTIFICATIONS
         };
 
         // Settings moved to Settings.Secure

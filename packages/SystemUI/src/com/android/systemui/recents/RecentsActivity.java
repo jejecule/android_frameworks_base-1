@@ -109,11 +109,12 @@ public class RecentsActivity extends Activity implements RecentsView.RecentsView
         }
 
         @Override
-        public void run() {
+        public void run() {  
             // Finish Recents
             if (mLaunchIntent != null) {
                 if (mLaunchOpts != null) {
                     startActivityAsUser(mLaunchIntent, mLaunchOpts.toBundle(), UserHandle.CURRENT);
+                    mRecentsView.enableShake(false);
                 } else {
                     startActivityAsUser(mLaunchIntent, UserHandle.CURRENT);
                 }
@@ -226,6 +227,7 @@ public class RecentsActivity extends Activity implements RecentsView.RecentsView
         int taskStackCount = stacks.size();
         if (mConfig.launchedToTaskId != -1) {
             for (int i = 0; i < taskStackCount; i++) {
+                mRecentsView.enableShake(true);
                 TaskStack stack = stacks.get(i);
                 ArrayList<Task> tasks = stack.getTasks();
                 int taskCount = tasks.size();
@@ -244,6 +246,8 @@ public class RecentsActivity extends Activity implements RecentsView.RecentsView
             if (mEmptyView == null) {
                 mEmptyView = mEmptyViewStub.inflate();
             }
+
+            mRecentsView.enableShake(false);
             mEmptyView.setVisibility(View.VISIBLE);
             mEmptyView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -258,6 +262,7 @@ public class RecentsActivity extends Activity implements RecentsView.RecentsView
                 mEmptyView.setVisibility(View.GONE);
                 mEmptyView.setOnClickListener(null);
             }
+            mRecentsView.enableShake(true);
             findViewById(R.id.clear_recents).setVisibility(View.VISIBLE);
             boolean showSearchBar = Settings.System.getInt(getContentResolver(),
                        Settings.System.RECENTS_SHOW_SEARCH_BAR, 1) == 1;
@@ -476,6 +481,8 @@ public class RecentsActivity extends Activity implements RecentsView.RecentsView
 
         // Update the recent tasks
         updateRecentsTasks(getIntent());
+
+        
 
         // If this is a new instance from a configuration change, then we have to manually trigger
         // the enter animation state

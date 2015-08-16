@@ -28,6 +28,7 @@ import android.net.Uri;
 import android.os.UserHandle;
 import android.provider.Settings;
 import android.util.AttributeSet;
+import android.util.SettingConfirmationHelper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowInsets;
@@ -39,6 +40,7 @@ import com.android.systemui.recents.model.RecentsPackageMonitor;
 import com.android.systemui.recents.model.RecentsTaskLoader;
 import com.android.systemui.recents.model.Task;
 import com.android.systemui.recents.model.TaskStack;
+import com.android.systemui.doze.ShakeSensorManager;
 
 import com.android.systemui.R;
 
@@ -49,7 +51,7 @@ import java.util.ArrayList;
  * to their SpaceNode bounds.
  */
 public class RecentsView extends FrameLayout implements TaskStackView.TaskStackViewCallbacks,
-        RecentsPackageMonitor.PackageCallbacks {
+        RecentsPackageMonitor.PackageCallbacks, ShakeSensorManager.ShakeListener {
 
     /** The RecentsView callbacks */
     public interface RecentsViewCallbacks {
@@ -69,6 +71,10 @@ public class RecentsView extends FrameLayout implements TaskStackView.TaskStackV
     RecentsViewCallbacks mCb;
     View mClearRecents;
 
+    private ShakeSensorManager mShakeSensorManager;
+    private boolean enableShakeCleanByUser;
+    private boolean enableShakeClean;
+
     public RecentsView(Context context) {
         super(context);
     }
@@ -85,6 +91,22 @@ public class RecentsView extends FrameLayout implements TaskStackView.TaskStackV
         super(context, attrs, defStyleAttr, defStyleRes);
         mConfig = RecentsConfiguration.getInstance();
         mInflater = LayoutInflater.from(context);
+        mShakeSensorManager = new ShakeSensorManager(mContext, this);
+
+    }
+
+    @Override
+    public synchronized void onShake() {
+        startHideClearRecentsButtonAnimation();
+        dismissAllTasksAnimated();
+    }
+
+    public void enableShake (boolean enableShakeClean) {
+        if (enableShakeClean && enableShakeCleanByUser) {
+            mShakeSensorManager.enable(20);
+        } else {
+            mShakeSensorManager.disable();
+        }
     }
 
     /** Sets the callbacks */
@@ -201,6 +223,7 @@ public class RecentsView extends FrameLayout implements TaskStackView.TaskStackV
 
                 // Find the launch task in the stack
                 if (!tasks.isEmpty()) {
+                    enableShake(false);
                     int taskCount = tasks.size();
                     for (int j = 0; j < taskCount; j++) {
                         if (tasks.get(j).isLaunchTarget) {
@@ -267,6 +290,7 @@ public class RecentsView extends FrameLayout implements TaskStackView.TaskStackV
                 .withEndAction(new Runnable() {
                     @Override
                     public void run() {
+                        enableShake(false);
                         mClearRecents.setVisibility(View.GONE);
                         mClearRecents.setAlpha(1f);
                     }
@@ -322,6 +346,8 @@ public class RecentsView extends FrameLayout implements TaskStackView.TaskStackV
                     MeasureSpec.makeMeasureSpec(searchBarSpaceBounds.height(), MeasureSpec.EXACTLY));
         }
 
+        enableShakeCleanByUser = Settings.System.getInt(mContext.getContentResolver(),
+            Settings.System.SHAKE_TO_CLEAN_RECENTS, 0) == 1;
         Rect taskStackBounds = new Rect();
         mConfig.getTaskStackBounds(width, height, mConfig.systemInsets.top,
                 mConfig.systemInsets.right, taskStackBounds);
@@ -390,6 +416,20 @@ public class RecentsView extends FrameLayout implements TaskStackView.TaskStackV
 
                 dismissAllTasksAnimated();
             }
+        });
+
+        mClearRecents.setOnLongClickListener(new View.OnLongClickListener() {
+             public boolean onLongClick(View v) {
+		    SettingConfirmationHelper helper =  new SettingConfirmationHelper();
+                        helper.showConfirmationDialogForSetting(
+                        mContext,
+                        mContext.getString(R.string.shake_to_clean_recents_title),
+                        mContext.getString(R.string.shake_to_clean_recents_message),
+                        mContext.getResources().getDrawable(R.drawable.shake_to_clean_recents),
+                        Settings.System.SHAKE_TO_CLEAN_RECENTS,
+                        null);
+                        return true;
+             }
         });
     }
 
@@ -640,6 +680,7 @@ public class RecentsView extends FrameLayout implements TaskStackView.TaskStackV
 
     /** Final callback after Recents is finally hidden. */
     public void onRecentsHidden() {
+        enableShake(false);
         // Notify each task stack view
         int childCount = getChildCount();
         for (int i = 0; i < childCount; i++) {
@@ -685,6 +726,7 @@ public class RecentsView extends FrameLayout implements TaskStackView.TaskStackV
     public void onPackagesChanged(RecentsPackageMonitor monitor, String packageName, int userId) {
         // Propagate this event down to each task stack view
         int childCount = getChildCount();
+        enableShake(true);
         for (int i = 0; i < childCount; i++) {
             View child = getChildAt(i);
             if (child != mSearchBar) {
