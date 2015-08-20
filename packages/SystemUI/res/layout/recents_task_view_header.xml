@@ -42,6 +42,7 @@
         android:maxLines="2"
         android:ellipsize="marquee"
         android:fadingEdge="horizontal" />
+
     <com.android.systemui.recents.views.FixedSizeImageView
         android:id="@+id/dismiss_task"
         android:layout_width="48dp"

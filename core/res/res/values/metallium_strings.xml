@@ -52,6 +52,10 @@
     <string name="safe_headset_warning_title">Safe headset volume</string>
     <string name="safe_headset_warning_message">Would you like to disable the recommended volume level warning?</string>
 
+    <!-- Three Finger Swipe Gesture to screenshot -->
+    <string name="three_finger_swipe_gesture_title">Three finger swipe gestures</string>
+    <string name="three_finger_swipe_gesture_message">Would you like to enable three finger swipe gesture to take screenshot ?</string>
+
     <!-- [CHAR LIMIT=NONE] Message shown in dialog on first boot after clean install for each .apk that is optimized. -->
     <string name="android_installing_apk">Installing app
         <xliff:g id="number" example="123">%1$d</xliff:g> of
