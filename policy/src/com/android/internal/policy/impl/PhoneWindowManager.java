@@ -1249,6 +1249,14 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         @Override
         public void run() {
             takeScreenshot();
+            SettingConfirmationHelper helper = new SettingConfirmationHelper();
+                helper.showConfirmationDialogForSetting(
+                mContext,
+                mContext.getString(R.string.three_finger_swipe_gesture_title),
+                mContext.getString(R.string.three_finger_swipe_gesture_message),
+                mContext.getResources().getDrawable(R.drawable.three_finger_swipe_gesture),
+                    Settings.System.THREE_FINGER_SWIPE_GESTURE,
+                    null);
         }
     };
 
@@ -1595,11 +1603,12 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     private void enableSwipeThreeFingerGesture(boolean enable) {
         if (enable) {
             if (haveEnableGesture) return;
-            haveEnableGesture = true;
-            mWindowManagerFuncs.registerPointerEventListener(mMetaGestures);
+                haveEnableGesture = true;
+                mWindowManagerFuncs.registerPointerEventListener(mMetaGestures);
         } else {
-            haveEnableGesture = false;
-            mWindowManagerFuncs.unregisterPointerEventListener(mMetaGestures);
+            if (!haveEnableGesture) return;
+                haveEnableGesture = false;
+                mWindowManagerFuncs.unregisterPointerEventListener(mMetaGestures);
         }
     }
 
@@ -5153,14 +5162,6 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                     if (down) {
                         if (interactive && !mScreenshotChordVolumeUpKeyTriggered
                                 && (event.getFlags() & KeyEvent.FLAG_FALLBACK) == 0) {
-                            SettingConfirmationHelper helper = new SettingConfirmationHelper();
-                                helper.showConfirmationDialogForSetting(
-                                mContext,
-                                mContext.getString(R.string.three_finger_swipe_gesture_title),
-                                mContext.getString(R.string.three_finger_swipe_gesture_message),
-                                mContext.getResources().getDrawable(R.drawable.three_finger_swipe_gesture),
-                                Settings.System.THREE_FINGER_SWIPE_GESTURE,
-                                null);
                             mVolumeUpKeyTriggered = true;
                             mVolumeUpKeyTime = event.getDownTime();
                             mVolumeUpKeyConsumedByScreenshotChord = false;
