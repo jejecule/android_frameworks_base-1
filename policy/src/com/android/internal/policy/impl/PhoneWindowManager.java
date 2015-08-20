@@ -75,6 +75,7 @@ import android.telecom.TelecomManager;
 import android.util.DisplayMetrics;
 import android.util.EventLog;
 import android.util.Log;
+import android.util.SettingConfirmationHelper;
 import android.util.Slog;
 import android.util.SparseArray;
 import android.view.Display;
@@ -646,6 +647,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     boolean mHavePendingMediaKeyRepeatWithWakeLock;
 
     private int mCurrentUserId;
+    private boolean haveEnableGesture = false;
 
     private int mSystemUIImmersiveFlags = 0;
 
@@ -811,6 +813,9 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             resolver.registerContentObserver(Settings.Secure.getUriFor(
                     Settings.Secure.SYSTEM_UI_FLAGS), false, this,
                     UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.Secure.getUriFor(
+                    Settings.System.THREE_FINGER_SWIPE_GESTURE), false, this,
+                    UserHandle.USER_ALL);
             updateSettings();
         }
 
@@ -866,6 +871,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     private ImmersiveModeConfirmation mImmersiveModeConfirmation;
 
     private SystemGesturesPointerEventListener mSystemGestures;
+    private MetaGesturesListener mMetaGestures;
 
     IStatusBarService getStatusBarService() {
         synchronized (mServiceAquireLock) {
@@ -1372,6 +1378,12 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         mWindowManagerInternal = LocalServices.getService(WindowManagerInternal.class);
         mDreamManagerInternal = LocalServices.getService(DreamManagerInternal.class);
 
+        mMetaGestures = new MetaGesturesListener(context, new MetaGesturesListener.Callbacks() {
+                    @Override
+                    public void onSwipeThreeFinger() {
+                        mHandler.post(mScreenshotRunnable);
+                    }
+               });
         mHandler = new PolicyHandler();
         mWakeGestureListener = new MyWakeGestureListener(mContext, mHandler);
         mOrientationListener = new MyOrientationListener(mContext, mHandler);
@@ -1577,6 +1589,17 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                         + deviceKeyHandlerClass + " from class "
                         + deviceKeyHandlerLib, e);
             }
+        }
+    }
+
+    private void enableSwipeThreeFingerGesture(boolean enable) {
+        if (enable) {
+            if (haveEnableGesture) return;
+            haveEnableGesture = true;
+            mWindowManagerFuncs.registerPointerEventListener(mMetaGestures);
+        } else {
+            haveEnableGesture = false;
+            mWindowManagerFuncs.unregisterPointerEventListener(mMetaGestures);
         }
     }
 
@@ -1796,6 +1819,12 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                     UserHandle.USER_CURRENT);
             mHomeWakeScreen = (Settings.System.getIntForUser(resolver,
                     Settings.System.HOME_WAKE_SCREEN, 1, UserHandle.USER_CURRENT) == 1);
+
+
+            // Three finger Gesture
+            boolean threeFingerGesture = Settings.System.getIntForUser(resolver,
+                    Settings.System.THREE_FINGER_SWIPE_GESTURE, 0, UserHandle.USER_CURRENT) == 1;
+            enableSwipeThreeFingerGesture(threeFingerGesture);
 
             // Configure wake gesture.
             boolean wakeGestureEnabledSetting = Settings.Secure.getIntForUser(resolver,
@@ -5100,6 +5129,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             }
         }
 
+
         // Handle special keys.
         switch (keyCode) {
             case KeyEvent.KEYCODE_VOLUME_DOWN:
@@ -5123,6 +5153,14 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                     if (down) {
                         if (interactive && !mScreenshotChordVolumeUpKeyTriggered
                                 && (event.getFlags() & KeyEvent.FLAG_FALLBACK) == 0) {
+                            SettingConfirmationHelper helper = new SettingConfirmationHelper();
+                                helper.showConfirmationDialogForSetting(
+                                mContext,
+                                mContext.getString(R.string.three_finger_swipe_gesture_title),
+                                mContext.getString(R.string.three_finger_swipe_gesture_message),
+                                mContext.getResources().getDrawable(R.drawable.three_finger_swipe_gesture),
+                                Settings.System.THREE_FINGER_SWIPE_GESTURE,
+                                null);
                             mVolumeUpKeyTriggered = true;
                             mVolumeUpKeyTime = event.getDownTime();
                             mVolumeUpKeyConsumedByScreenshotChord = false;

@@ -2507,7 +2507,7 @@ public final class Settings {
         */
         public static final String DEV_FORCE_SHOW_NAVBAR = "dev_force_show_navbar";
 
-
+      
         /**
          * Date format string
          *   mm/dd/yyyy
@@ -3335,6 +3335,13 @@ public final class Settings {
         public static final String SHAKE_TO_CLEAN_NOTIFICATIONS = "shake_to_clean_notifications";
 
         /**
+         * Three Finger Swipe gestures for screenshot
+         * @hide
+         *
+         */
+        public static final String THREE_FINGER_SWIPE_GESTURE = "three_finger_swipe_gesture";
+
+        /**
          * Settings to backup. This is here so that it's in the same place as the settings
          * keys and easy to update.
          *
@@ -3446,7 +3453,8 @@ public final class Settings {
             QUICK_SETTINGS_QUICK_PULL_DOWN,
             SAFE_HEADSET_VOLUME,
             SHAKE_TO_CLEAN_RECENTS,
-            SHAKE_TO_CLEAN_NOTIFICATIONS
+            SHAKE_TO_CLEAN_NOTIFICATIONS,
+            THREE_FINGER_SWIPE_GESTURE
         };
 
         // Settings moved to Settings.Secure
