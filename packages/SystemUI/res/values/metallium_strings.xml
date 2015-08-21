@@ -76,4 +76,11 @@
 
     <!-- No interuptions except alarms -->
     <string name="zen_no_interruptions_but_alarm">No interruptions. Except alarms.</string>
+
+    <!-- The text for the button in the notification window-shade that clears
+         all of the currently visible notifications. [CHAR LIMIT=10]-->
+    <string name="clear_recents">Close all recent</string>
+     
+    <!-- Contact Bubbles -->
+    <string name="whos_going_out">Favorites</string>
 </resources>

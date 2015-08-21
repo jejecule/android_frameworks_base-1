@@ -228,6 +228,9 @@
             </intent-filter>
         </receiver>
 
+	<activity android:name=".bubbles.ContactBubbleActivity"
+		android:theme="@android:style/Theme.Translucent.NoTitleBar"
+		/>
         <!-- started from UsbDeviceSettingsManager -->
         <activity android:name=".usb.UsbConfirmActivity"
             android:exported="true"

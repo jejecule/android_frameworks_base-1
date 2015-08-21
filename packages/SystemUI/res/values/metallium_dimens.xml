@@ -26,4 +26,8 @@
 
     <!-- Side padding for the Quick Settings panel -->
     <dimen name="qs_panel_side_padding">@dimen/notification_side_padding</dimen>
+
+    <!-- Contact Bubbles -->
+    <dimen name="person_bubble_width">162dp</dimen>
+    <dimen name="person_bubble_corner">8dp</dimen>
 </resources>
