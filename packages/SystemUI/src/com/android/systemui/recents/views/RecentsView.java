@@ -102,8 +102,6 @@ public class RecentsView extends FrameLayout implements TaskStackView.TaskStackV
     }
 
     public void enableShake (boolean enableShakeClean) {
-        ContentResolver resolver = mContext.getContentResolver();
-        enableShakeCleanByUser = Settings.System.getInt(resolver,
         if (enableShakeClean && enableShakeCleanByUser) {
             mShakeSensorManager.enable(20);
         } else {
