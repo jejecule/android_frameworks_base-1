@@ -57,7 +57,7 @@ public class MetaGesturesListener implements PointerEventListener {
     }
 
     @Override
-    public boolean onPointerEvent(MotionEvent event) {
+    public void onPointerEvent(MotionEvent event) {
         switch (event.getActionMasked()) {
             case MotionEvent.ACTION_DOWN:
                 mSwipeFireable = true;
@@ -87,8 +87,6 @@ public class MetaGesturesListener implements PointerEventListener {
             default:
                 if (DEBUG) Slog.d(TAG, "Ignoring " + event);
         }
-        
-        return false;
     }
 
     private void captureDown(MotionEvent event, int pointerIndex) {
