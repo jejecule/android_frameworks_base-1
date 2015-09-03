@@ -50,7 +50,6 @@ import com.android.systemui.volume.ZenModePanel;
 
 /** Quick settings tile: Notifications **/
 public class NotificationsTile extends QSTile<NotificationsTile.NotificationsState> {
-    public static final String SPEC = "notifications";
     private final ZenModeController mZenController;
     private final AudioManager mAudioManager;
     private final Vibrator mVibrator;
@@ -72,7 +71,7 @@ public class NotificationsTile extends QSTile<NotificationsTile.NotificationsSta
     private int mRingerIndex;
 
     public NotificationsTile(Host host) {
-        super(host, SPEC);
+        super(host);
         mZenController = host.getZenModeController();
         mAudioManager = (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE);
         mVibrator = (Vibrator) mContext.getSystemService(Context.VIBRATOR_SERVICE);
@@ -103,7 +102,7 @@ public class NotificationsTile extends QSTile<NotificationsTile.NotificationsSta
     }
 
     @Override
-    protected void handleToggleClick() {
+    protected void handleClick() {
         mRingerIndex++;
         if (mRingerIndex >= RINGERS.length) {
             mRingerIndex = 0;
@@ -124,8 +123,14 @@ public class NotificationsTile extends QSTile<NotificationsTile.NotificationsSta
     }
 
     @Override
-    protected void handleDetailClick() {
-        handleToggleClick();
+    protected void handleLongClick() {
+        super.handleLongClick();
+        showDetail(true);
+    }
+
+    @Override
+    protected void handleSecondaryClick() {
+        showDetail(true);
     }
 
     @Override

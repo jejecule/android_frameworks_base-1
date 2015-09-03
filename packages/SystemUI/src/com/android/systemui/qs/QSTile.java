@@ -55,7 +55,6 @@ public abstract class QSTile<TState extends State> implements Listenable {
     protected static final boolean DEBUG = Log.isLoggable("QSTile", Log.DEBUG);
 
     protected final Host mHost;
-    protected final String mSpec;
     protected final Context mContext;
     protected final H mHandler;
     protected final Handler mUiHandler = new Handler(Looper.getMainLooper());
@@ -66,41 +65,21 @@ public abstract class QSTile<TState extends State> implements Listenable {
     private boolean mAnnounceNextStateChange;
 
     abstract protected TState newTileState();
-    /** Handles the user requesting a toggle action from the tile. */
-    abstract protected void handleToggleClick();
-    /** Handles the user requesting a detail view from the tile. */
-    abstract protected void handleDetailClick();
+    abstract protected void handleClick();
     abstract protected void handleUpdateState(TState state, Object arg);
 
-    protected QSTile(Host host, String spec) {
+    protected QSTile(Host host) {
         mHost = host;
-        mSpec = spec;
         mContext = host.getContext();
         mHandler = new H(host.getLooper());
     }
 
-    public boolean isNativeDualTargets() {
+    public boolean supportsDualTargets() {
         return false;
-    }
-
-    /**
-     * Returns whether dual targets are supported by this tile.
-     * As all tiles can be turned into dual-target tiles since
-     * implementing QS reordering, this call will always return
-     * true and has been deprecated.
-     *
-     * @deprecated
-     */
-    public final boolean supportsDualTargets() {
-        return true;
     }
 
     public Host getHost() {
         return mHost;
-    }
-
-    public String getSpec() {
-        return mSpec;
     }
 
     public QSTileView createTileView(Context context) {
@@ -125,8 +104,8 @@ public abstract class QSTile<TState extends State> implements Listenable {
         mHandler.obtainMessage(H.SET_CALLBACK, callback).sendToTarget();
     }
 
-    public void click(boolean isDual) {
-        mHandler.obtainMessage(H.CLICK, isDual ? 1 : 0, 0).sendToTarget();
+    public void click() {
+        mHandler.sendEmptyMessage(H.CLICK);
     }
 
     public void secondaryClick() {
@@ -176,19 +155,8 @@ public abstract class QSTile<TState extends State> implements Listenable {
         handleRefreshState(null);
     }
 
-    private void handleClick(boolean isDual) {
-        if (isDual) {
-            // dual tiles have a regular and secondary click - regular is for toggles
-            handleToggleClick();
-        } else {
-            // non-dual tiles don't have a secondary click - regular is for details
-            handleDetailClick();
-        }
-    }
-
-    private void handleSecondaryClick() {
-        // this should only get called in dual tiles
-        handleDetailClick();
+    protected void handleSecondaryClick() {
+        // optional
     }
 
     protected void handleLongClick() {
@@ -278,7 +246,7 @@ public abstract class QSTile<TState extends State> implements Listenable {
                 } else if (msg.what == CLICK) {
                     name = "handleClick";
                     mAnnounceNextStateChange = true;
-                    handleClick(msg.arg1 != 0);
+                    handleClick();
                 } else if (msg.what == SECONDARY_CLICK) {
                     name = "handleSecondaryClick";
                     handleSecondaryClick();
@@ -325,7 +293,7 @@ public abstract class QSTile<TState extends State> implements Listenable {
         void collapsePanels();
         Looper getLooper();
         Context getContext();
-        QSTile<?>[] getTiles();
+        Collection<QSTile<?>> getTiles();
         void setCallback(Callback callback);
         BluetoothController getBluetoothController();
         LocationController getLocationController();

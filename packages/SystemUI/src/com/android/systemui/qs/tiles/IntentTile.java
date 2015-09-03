@@ -44,7 +44,7 @@ public class IntentTile extends QSTile<QSTile.State> {
     private int mCurrentUserId;
 
     private IntentTile(Host host, String action) {
-        super(host, action);
+        super(host);
         mContext.registerReceiver(mReceiver, new IntentFilter(action));
     }
 
@@ -81,12 +81,12 @@ public class IntentTile extends QSTile<QSTile.State> {
     }
 
     @Override
-    protected void handleToggleClick() {
+    protected void handleClick() {
         sendIntent("click", mOnClick, mOnClickUri);
     }
 
     @Override
-    protected void handleDetailClick() {
+    protected void handleLongClick() {
         sendIntent("long-click", mOnLongClick, mOnLongClickUri);
     }
 

@@ -33,15 +33,12 @@ public class AirplaneModeTile extends QSTile<QSTile.BooleanState> {
             new AnimationIcon(R.drawable.ic_signal_airplane_enable_animation);
     private final AnimationIcon mDisable =
             new AnimationIcon(R.drawable.ic_signal_airplane_disable_animation);
-
-    public static final String SPEC = "airplane";
-
     private final GlobalSetting mSetting;
 
     private boolean mListening;
 
     public AirplaneModeTile(Host host) {
-        super(host, SPEC);
+        super(host);
 
         mSetting = new GlobalSetting(mContext, mHandler, Global.AIRPLANE_MODE_ON) {
             @Override
@@ -57,16 +54,10 @@ public class AirplaneModeTile extends QSTile<QSTile.BooleanState> {
     }
 
     @Override
-    protected void handleToggleClick() {
+    public void handleClick() {
         setEnabled(!mState.value);
         mEnable.setAllowAnimation(true);
         mDisable.setAllowAnimation(true);
-    }
-
-    @Override
-    protected void handleDetailClick() {
-        // There are no additional details and we do not want to link this up to generic Settings.
-        handleToggleClick();
     }
 
     private void setEnabled(boolean enabled) {

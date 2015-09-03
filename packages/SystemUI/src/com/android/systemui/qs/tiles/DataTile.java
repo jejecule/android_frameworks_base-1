@@ -47,13 +47,11 @@ import com.android.systemui.qs.QSTile;
 /** Quick settings tile: Mobile data switch **/
 public class DataTile extends QSTile<QSTile.BooleanState> {
     TelephonyManager mTelephonyManager;
-    public static final String SPEC = "data";
-
     private DataObserver mDataObserver;
     private boolean mListening = false;
 
     public DataTile(Host host) {
-        super(host, SPEC);
+        super(host);
         mTelephonyManager = (TelephonyManager)mContext.getSystemService(Context.TELEPHONY_SERVICE);
         mDataObserver = new DataObserver(mHandler);
     }
@@ -64,7 +62,7 @@ public class DataTile extends QSTile<QSTile.BooleanState> {
     }
 
     @Override
-    public void handleToggleClick() {
+    public void handleClick() {
         if (dataSwitchEnabled()) {
             setEnabled(!mState.value);
         } else {
@@ -74,11 +72,6 @@ public class DataTile extends QSTile<QSTile.BooleanState> {
                     "com.android.settings.Settings$DataUsageSummaryActivity"));
             mHost.startSettingsActivity(intent);
         }
-    }
-
-    @Override
-    protected void handleDetailClick() {
-        handleToggleClick();
     }
 
     private void setEnabled(boolean enabled) {

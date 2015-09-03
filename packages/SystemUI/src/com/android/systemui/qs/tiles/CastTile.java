@@ -37,7 +37,6 @@ import java.util.Set;
 
 /** Quick settings tile: Cast **/
 public class CastTile extends QSTile<QSTile.BooleanState> {
-    public static final String SPEC = "cast";
     private static final Intent CAST_SETTINGS =
             new Intent(Settings.ACTION_CAST_SETTINGS);
 
@@ -47,7 +46,7 @@ public class CastTile extends QSTile<QSTile.BooleanState> {
     private final Callback mCallback = new Callback();
 
     public CastTile(Host host) {
-        super(host, SPEC);
+        super(host);
         mController = host.getCastController();
         mDetailAdapter = new CastDetailAdapter();
         mKeyguard = host.getKeyguardMonitor();
@@ -85,13 +84,7 @@ public class CastTile extends QSTile<QSTile.BooleanState> {
     }
 
     @Override
-    protected void handleToggleClick() {
-        // TODO Consider adding a kill switch a la kill-all-connections-now
-        handleDetailClick();
-    }
-
-    @Override
-    protected void handleDetailClick() {
+    protected void handleClick() {
         showDetail(true);
     }
 

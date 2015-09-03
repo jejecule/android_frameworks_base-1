@@ -52,8 +52,6 @@ import java.util.HashMap;
 
 /** Quick settings tile: Apn switch **/
 public class ApnTile extends QSTile<QSTile.State> {
-    public static final String SPEC = "apn";
-
     private final boolean DEBUG = false;
     private final String TAG = "ApnTile";
 
@@ -75,7 +73,7 @@ public class ApnTile extends QSTile<QSTile.State> {
     private String mCurrentApnName = "";
 
     public ApnTile(Host host) {
-        super(host, SPEC);
+        super(host);
 
         mApnIcons = new ArrayList<Integer>();
         mApnIcons.add(R.drawable.ic_qs_apn1);
@@ -91,7 +89,7 @@ public class ApnTile extends QSTile<QSTile.State> {
     }
 
     @Override
-    public void handleToggleClick() {
+    public void handleClick() {
         long curId = 0;
         try {
             curId = Long.parseLong(getCurrentApnId());
@@ -99,11 +97,6 @@ public class ApnTile extends QSTile<QSTile.State> {
         }
         if (DEBUG) Log.i(TAG, "Current apn id is: " + curId);
         setPrefApn(curId);
-    }
-
-    @Override
-    protected void handleDetailClick() {
-        handleToggleClick();
     }
 
     @Override

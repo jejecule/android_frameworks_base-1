@@ -22,8 +22,6 @@ import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.content.Intent;
-import android.provider.Settings;
 
 import android.widget.AbsListView;
 import android.widget.AdapterView;
@@ -43,9 +41,8 @@ import java.util.List;
 
 /** Quick settings tile: Location **/
 public class LocationTile extends QSTile<QSTile.BooleanState> {
-    public static final String SPEC = "location";
-    private static final Intent LOCATION_SOURCE_SETTINGS =
-            new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+    private static final Intent LOCATION_SETTINGS_INTENT
+            = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
     public static final Integer[] LOCATION_SETTINGS = new Integer[]{
             Settings.Secure.LOCATION_MODE_BATTERY_SAVING,
             Settings.Secure.LOCATION_MODE_SENSORS_ONLY,
@@ -64,7 +61,7 @@ public class LocationTile extends QSTile<QSTile.BooleanState> {
     private final Callback mCallback = new Callback();
 
     public LocationTile(Host host) {
-        super(host, SPEC);
+        super(host);
         mController = host.getLocationController();
         mDetailAdapter = new LocationDetailAdapter();
         mKeyguard = host.getKeyguardMonitor();
@@ -92,15 +89,10 @@ public class LocationTile extends QSTile<QSTile.BooleanState> {
     }
 
     @Override
-    protected void handleToggleClick() {
+    protected void handleClick() {
         showDetail(true);
         mEnable.setAllowAnimation(true);
         mDisable.setAllowAnimation(true);
-    }
-
-    @Override
-    protected void handleDetailClick() {
-        handleToggleClick();
     }
 
     @Override
@@ -119,22 +111,22 @@ public class LocationTile extends QSTile<QSTile.BooleanState> {
             case Settings.Secure.LOCATION_MODE_OFF:
                 state.contentDescription = mContext.getString(
                         R.string.accessibility_quick_settings_location_off);
-                state.icon = mDisable;
+                state.iconId = mDisable;
                 break;
             case Settings.Secure.LOCATION_MODE_BATTERY_SAVING:
                 state.contentDescription = mContext.getString(
                         R.string.accessibility_quick_settings_location_battery_saving);
-                state.icon = ResourceIcon.get(R.drawable.ic_qs_location_battery_saving);
+                state.iconId = R.drawable.ic_qs_location_battery_saving;
                 break;
             case Settings.Secure.LOCATION_MODE_SENSORS_ONLY:
                 state.contentDescription = mContext.getString(
                         R.string.accessibility_quick_settings_location_gps_only);
-                state.icon = mEnable;
+                state.iconId = mEnable;
                 break;
             case Settings.Secure.LOCATION_MODE_HIGH_ACCURACY:
                 state.contentDescription = mContext.getString(
                         R.string.accessibility_quick_settings_location_high_accuracy);
-                state.icon = mEnable;
+                state.iconId = mEnable;
                 break;
             default:
                 state.contentDescription = mContext.getString(
@@ -214,7 +206,7 @@ public class LocationTile extends QSTile<QSTile.BooleanState> {
 
         @Override
         public Intent getSettingsIntent() {
-            return LOCATION_SOURCE_SETTINGS;
+            return LOCATION_SETTINGS_INTENT;
         }
 
         @Override
@@ -227,6 +219,8 @@ public class LocationTile extends QSTile<QSTile.BooleanState> {
         @Override
         public View createDetailView(Context context, View convertView, ViewGroup parent) {
             mDetails = QSDetailItemsList.convertOrInflate(context, convertView, parent);
+            mDetails.setEmptyState(R.drawable.ic_qs_location_off,
+                    R.string.accessibility_quick_settings_location_off);
             mAdapter = new LocationTile.AdvancedLocationAdapter(context);
             mDetails.setAdapter(mAdapter);
 

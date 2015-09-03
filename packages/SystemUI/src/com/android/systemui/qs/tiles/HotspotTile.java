@@ -32,16 +32,13 @@ public class HotspotTile extends QSTile<QSTile.BooleanState> {
             new AnimationIcon(R.drawable.ic_hotspot_enable_animation);
     private final AnimationIcon mDisable =
             new AnimationIcon(R.drawable.ic_hotspot_disable_animation);
-
-    public static final String SPEC = "hotspot";
-
     private final HotspotController mController;
     private final Callback mCallback = new Callback();
     private final UsageTracker mUsageTracker;
     private final KeyguardMonitor mKeyguard;
 
     public HotspotTile(Host host) {
-        super(host, SPEC);
+        super(host);
         mController = host.getHotspotController();
         mUsageTracker = newUsageTracker(host.getContext());
         mUsageTracker.setListening(true);
@@ -69,7 +66,7 @@ public class HotspotTile extends QSTile<QSTile.BooleanState> {
     }
 
     @Override
-    protected void handleToggleClick() {
+    protected void handleClick() {
         final boolean isEnabled = (Boolean) mState.value;
         mController.setHotspotEnabled(!isEnabled);
         mEnable.setAllowAnimation(true);
@@ -77,8 +74,7 @@ public class HotspotTile extends QSTile<QSTile.BooleanState> {
     }
 
     @Override
-    protected void handleDetailClick() {
-        /** Remove Usage Reset for now
+    protected void handleLongClick() {
         if (mState.value) return;  // don't allow usage reset if hotspot is active
         final String title = mContext.getString(R.string.quick_settings_reset_confirmation_title,
                 mState.label);
@@ -87,8 +83,7 @@ public class HotspotTile extends QSTile<QSTile.BooleanState> {
             public void run() {
                 refreshState();
             }
-        });**/
-        handleToggleClick();
+        });
     }
 
     @Override

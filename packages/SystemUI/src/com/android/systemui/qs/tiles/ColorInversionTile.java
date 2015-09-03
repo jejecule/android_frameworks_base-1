@@ -16,8 +16,6 @@
 
 package com.android.systemui.qs.tiles;
 
-import android.content.Intent;
-import android.provider.Settings;
 import android.provider.Settings.Secure;
 
 import com.android.systemui.R;
@@ -27,9 +25,6 @@ import com.android.systemui.qs.UsageTracker;
 
 /** Quick settings tile: Invert colors **/
 public class ColorInversionTile extends QSTile<QSTile.BooleanState> {
-    public static final String SPEC = "inversion";
-    private static final Intent ACCESSIBILITY_SETTINGS =
-            new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
 
     private final AnimationIcon mEnable
             = new AnimationIcon(R.drawable.ic_invert_colors_enable_animation);
@@ -41,7 +36,7 @@ public class ColorInversionTile extends QSTile<QSTile.BooleanState> {
     private boolean mListening;
 
     public ColorInversionTile(Host host) {
-        super(host, SPEC);
+        super(host);
 
         mSetting = new SecureSetting(mContext, mHandler,
                 Secure.ACCESSIBILITY_DISPLAY_INVERSION_ENABLED) {
@@ -88,7 +83,7 @@ public class ColorInversionTile extends QSTile<QSTile.BooleanState> {
     }
 
     @Override
-    protected void handleToggleClick() {
+    protected void handleClick() {
         mSetting.setValue(mState.value ? 0 : 1);
         mEnable.setAllowAnimation(true);
         mDisable.setAllowAnimation(true);
@@ -105,12 +100,6 @@ public class ColorInversionTile extends QSTile<QSTile.BooleanState> {
                 refreshState();
             }
         });
-    }
-
-    @Override
-    protected void handleDetailClick() {
-        // There are no additional details and we do not want to link this up to Accessibility.
-        handleToggleClick();
     }
 
     @Override

@@ -47,7 +47,6 @@ import com.android.systemui.qs.QSTileView;
 
 /** Quick settings tile: Dds switch **/
 public class DdsTile extends QSTile<QSTile.State> {
-    public static final String SPEC = "dds";
     private final boolean DEBUG = false;
     private final String TAG = "DdsTile";
 
@@ -58,7 +57,7 @@ public class DdsTile extends QSTile<QSTile.State> {
     private final DdsObserver mDdsObserver;
 
     public DdsTile(Host host) {
-        super(host, SPEC);
+        super(host);
         mDdsObserver = new DdsObserver(mHandler);
     }
 
@@ -74,13 +73,8 @@ public class DdsTile extends QSTile<QSTile.State> {
     }
 
     @Override
-    public void handleToggleClick() {
+    public void handleClick() {
         switchDdsToNext();
-    }
-
-    @Override
-    protected void handleDetailClick() {
-        handleToggleClick();
     }
 
     @Override
