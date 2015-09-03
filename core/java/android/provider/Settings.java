@@ -3253,12 +3253,6 @@ public final class Settings {
          */
         public static final String RECENTS_SHOW_SEARCH_BAR = "recents_show_search_bar";
 
-        /**
-         * Add global SystemUI flags (e.g. for immersive mode)
-         * @hide
-         */
-        public static final String SYSTEM_UI_FLAGS = "system_ui_flags";
-
          /**
          * Color temperature of the display during the day
          * @hide
@@ -5637,18 +5631,6 @@ public final class Settings {
          * @hide
          */
         public static final String ADVANCED_REBOOT = "advanced_reboot";
-
-        /**
-         * Add global SystemUI flags (e.g. for immersive mode)
-         * @hide
-         */
-        public static final String SYSTEM_UI_FLAGS = "system_ui_flags";
-
-        /**
-         * Used to store the last used system ui flags to make qs settings stick after reboot
-         * @hide
-         */
-        public static final String LAST_SYSTEM_UI_FLAGS = "last_system_ui_flags";
 
          /**
          * Stored color matrix for LiveDisplay. This is used to allow co-existence with
